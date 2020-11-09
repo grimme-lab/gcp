@@ -1,0 +1,4 @@
+[wrap-git]
+directory = mctc-lib
+url = git@github.com:grimme-lab/mctc-lib
+revision = head

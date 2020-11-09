@@ -1,0 +1,17 @@
+name = "mctc-gcp"
+version = "2.1.0"
+license = "GPL-3.0-or-later"
+
+[dependencies]
+[dependencies.mctc-lib]
+git = "git@github.com:grimme-lab/mctc-lib"
+
+[[executable]]
+name = "mctc-gcp"
+main = "main.f90"
+source-dir = "app"
+
+[[executable]]
+name = "gcp"
+main = "main.f90"
+source-dir = "old"
