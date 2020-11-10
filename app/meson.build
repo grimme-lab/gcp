@@ -1,4 +1,5 @@
 # This file is part of mctc-gcp.
+# SPDX-Identifier: GPL-3.0-or-later
 #
 # mctc-gcp is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by

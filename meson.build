@@ -1,4 +1,5 @@
 # This file is part of mctc-gcp.
+# SPDX-Identifier: GPL-3.0-or-later
 #
 # mctc-gcp is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@ project(
   'mctc-gcp',
   'fortran',
   version: '2.1.0',
-  license: 'LGPL-3.0-or-later',
+  license: 'GPL-3.0-or-later',
   meson_version: '>=0.53',
   default_options: [
     'buildtype=debugoptimized',

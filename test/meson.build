@@ -1,4 +1,5 @@
 # This file is part of mctc-gcp.
+# SPDX-Identifier: GPL-3.0-or-later
 #
 # mctc-gcp is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by
@@ -29,7 +30,9 @@ endif
 mstore_dep = mstore_prj.get_variable('mstore_dep')
 
 tests = [
-  'gcp',
+  'gcp-hf-methods',
+  'gcp-dft-methods',
+  'gcp-3c-methods',
 ]
 
 test_srcs = files(

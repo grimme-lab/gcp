@@ -1,4 +1,7 @@
-# Geometric Counter-Poise Correction
+# Geometrical Counter-Poise Correction
+
+[![DOI](https://img.shields.io/badge/DOI-10.1063%2F1.3700154-blue)](https://doi.org/10.1063/1.3700154)
+[![DOI](https://img.shields.io/badge/DOI-10.1021%2Fjp406658y-blue)](https://doi.org/10.1021/jp406658y)
 
 
 ## Installation
@@ -26,6 +29,34 @@ You can run the projects testsuite with
 ```
 meson test -C _build --print-errorlogs
 ```
+
+If the testsuite passes you can install with
+
+```
+meson install -C _build
+```
+
+This might require administrator access.
+You can alter the install prefix by ``meson configure _build --prefix=/path/to/install``.
+
+
+## Contributors
+
+- J. Gerit Brandenburg ([**@gbrandenburg**](https://github.com/gbrandenburg))
+- Sebastian Ehlert ([**@awvwgk**](https://github.com/awvwgk))
+- Holger Kruse ([**@hokru**](https://github.com/hokru))
+
+
+## References
+
+Please cite the GCP reference publication for work done with this program
+
+1. H. Kruse, S. Grimme *J. Chem. Phys.* 136, 154101 (2012).
+   DOI: [10.1063/1.3700154](https://doi.org/10.1063/1.3700154)
+2. For periodic GCP also cite:
+   J. G. Brandenburg, M. Alessio, B. Civalleri, M. F. Peintinger,
+   T. Bredow, S.Grimme J. Phys. Chem. A 117, 9282-9292 (2013).
+   DOI: [10.1021/jp406658y](https://doi.org/10.1021/jp406658y)
 
 
 ## License

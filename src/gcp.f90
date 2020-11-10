@@ -1,3 +1,19 @@
+! This file is part of mctc-gcp.
+! SPDX-Identifier: GPL-3.0-or-later
+!
+! mctc-gcp is free software: you can redistribute it and/or modify it under
+! the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! mctc-gcp is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with mctc-gcp.  If not, see <https://www.gnu.org/licenses/>.
+
 module gcp
    use gcp_version, only : get_gcp_version
 contains
@@ -444,10 +460,6 @@ endif
    if(echo) write(*,'(2x,a5,2x,a5,2x,a5,2x,a7,2x,a14,4x,a15)') &
         '#','ON','sites','Nvirt','Emiss','BSSE [kcal/mol]'
 if(pbc) then
-    !Determine supercell
-    write(*,*) 'lattice(1:3,1) ',lat(1:3,1)
-    write(*,*) 'lattice(1:3,2) ',lat(1:3,2)
-    write(*,*) 'lattice(1:3,3) ',lat(1:3,3)
     !Determine supercell
     call criteria(thrR, lat, tau_max)
    ! Loop over all i atoms
@@ -3513,7 +3525,7 @@ end
 !c    rdatomnumbervasp
 !c    reads the number of atoms from vasp file POSCAR
 subroutine rdatomnumbervasp(infile,n,echo)
-use strings
+use gcp_strings
 implicit none
 !c input
 character*20 infile    !inputfile
@@ -3563,7 +3575,7 @@ end subroutine rdatomnumbervasp
 !c    read geometry from vasp file POSCAR
 !c    reads fixed coordinates (selective dynamics)
 subroutine rdcoordvasp(xyz,lat,iat,nat,infile,echo)
-use strings
+use gcp_strings
 implicit none
 !input
 character*(*) infile    !input file

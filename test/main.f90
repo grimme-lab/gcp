@@ -1,4 +1,5 @@
 ! This file is part of mctc-gcp.
+! SPDX-Identifier: GPL-3.0-or-later
 !
 ! mctc-gcp is free software: you can redistribute it and/or modify it under
 ! the terms of the GNU General Public License as published by
@@ -18,7 +19,9 @@ program tester
    use, intrinsic :: iso_fortran_env, only : error_unit
    use mctc_env_testing, only : run_testsuite, new_testsuite, testsuite_type, &
       & select_suite, run_selected
-   use test_gcp, only : collect_gcp
+   use test_gcp_hf_methods, only : collect_gcp_hf_methods
+   use test_gcp_dft_methods, only : collect_gcp_dft_methods
+   use test_gcp_3c_methods, only : collect_gcp_3c_methods
    implicit none
    integer :: stat, is
    character(len=:), allocatable :: suite_name, test_name
@@ -28,7 +31,9 @@ program tester
    stat = 0
 
    testsuites = [ &
-      & new_testsuite("gcp", collect_gcp) &
+      & new_testsuite("gcp-hf-methods", collect_gcp_hf_methods), &
+      & new_testsuite("gcp-dft-methods", collect_gcp_dft_methods), &
+      & new_testsuite("gcp-3c-methods", collect_gcp_3c_methods) &
       & ]
 
    call get_argument(1, suite_name)

@@ -1,9 +1,25 @@
+! This file is part of mctc-gcp.
+! SPDX-Identifier: GPL-3.0-or-later
+!
+! mctc-gcp is free software: you can redistribute it and/or modify it under
+! the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! mctc-gcp is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with mctc-gcp.  If not, see <https://www.gnu.org/licenses/>.
+
 program main
    use, intrinsic :: iso_fortran_env, only : output_unit, error_unit, input_unit
    use mctc_env
    use mctc_io
    use gcp, only : gcp_call, wregrad_tm, get_gcp_version
-   use strings, only : lowercase
+   use gcp_strings, only : lowercase
    implicit none
    character(len=*), parameter :: prog_name = "mctc-gcp"
 
@@ -78,12 +94,17 @@ subroutine help(unit)
 
    write(unit, '(a)') &
       "", &
+      "Geometrical counterpoise correction program.", &
+      "Takes an geometry input to calculate the counterpoise correction.", &
+      "Periodic calculations are performed automatically for periodic input formats", &
+      "Specify the level of your calculation to select the correct parameters.", &
       ""
 
    write(unit, '(2x, a, t25, a)') &
       "-i, --input <format>", "Hint for the format of the input file", &
-      "-l, --level <method>", "specify method to corrcet for", &
-      "", "if not present parameters are read from ~/.gcppar.$HOSTNAME instead", &
+      "-l, --level <method>", "specify method to corrcet for,", &
+      "", "if not present or set to file, local parameters are used,", &
+      "", "local parameters are read from ~/.gcppar.$HOSTNAME", &
       "--grad", "request gradient evaluation", &
       "--hess", "request hessian evaluation", &
       "--noprint", "Reduce printout, only print warnings", &

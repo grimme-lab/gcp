@@ -15,8 +15,8 @@
 
 srcs += files(
   'gcp.f90',
-  'precision.f90',
-  'strings.f90',
+  'gcp_precision.f90',
+  'gcp_strings.f90',
   'gcp_version.f90',
 )
 
