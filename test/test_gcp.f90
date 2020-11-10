@@ -17,7 +17,7 @@ module test_gcp
    use mctc_env, only : wp
    use mctc_env_testing, only : new_unittest, unittest_type, error_type, check
    use mctc_io_structure, only : structure_type
-   use testsuite_structure, only : get_structure
+   use mstore, only : get_structure
    use gcp
    implicit none
    private
@@ -112,7 +112,7 @@ subroutine test_hf3c(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless01")
+   call get_structure(mol, "MB16-43", "01")
    call test_generic(error, mol, "hf3c", -0.10185940933506053_wp)
 
 end subroutine test_hf3c
@@ -125,7 +125,7 @@ subroutine test_pbeh3c(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless02")
+   call get_structure(mol, "MB16-43", "02")
    call test_generic(error, mol, "pbeh3c", 2.0602039298887861E-2_wp)
 
 end subroutine test_pbeh3c
@@ -138,7 +138,7 @@ subroutine test_hse3c(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless03")
+   call get_structure(mol, "MB16-43", "03")
    call test_generic(error, mol, "hse3c", 1.9885888051458127E-2_wp)
 
 end subroutine test_hse3c
@@ -151,7 +151,7 @@ subroutine test_hf_minis(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless04")
+   call get_structure(mol, "MB16-43", "04")
    call test_generic(error, mol, "hf/minis", 1.5336656998809515E-2_wp)
 
 end subroutine test_hf_minis
@@ -164,7 +164,7 @@ subroutine test_hf_minix(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless05")
+   call get_structure(mol, "MB16-43", "05")
    call test_generic(error, mol, "hf/minix", 1.8559832674618637E-2_wp)
 
 end subroutine test_hf_minix
@@ -177,7 +177,7 @@ subroutine test_hf_sv(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless06")
+   call get_structure(mol, "MB16-43", "06")
    call test_generic(error, mol, "hf/sv", 6.4701104644333107E-3_wp)
 
 end subroutine test_hf_sv
@@ -190,7 +190,7 @@ subroutine test_hf_def2sv_p(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless07")
+   call get_structure(mol, "MB16-43", "07")
    call test_generic(error, mol, "hf/def2-sv(p)", 1.5009548340274959E-2_wp)
 
 end subroutine test_hf_def2sv_p
@@ -203,7 +203,7 @@ subroutine test_hf_def2svp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless08")
+   call get_structure(mol, "MB16-43", "08")
    call test_generic(error, mol, "hf/def2-svp", 1.8249078757662872E-2_wp)
 
 end subroutine test_hf_def2svp
@@ -216,7 +216,7 @@ subroutine test_hf_dzp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless08")
+   call get_structure(mol, "MB16-43", "08")
    call test_generic(error, mol, "hf/dzp", 2.4002048454141937E-2_wp)
 
 end subroutine test_hf_dzp
@@ -229,7 +229,7 @@ subroutine test_hf_deftzvp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless09")
+   call get_structure(mol, "MB16-43", "09")
    call test_generic(error, mol, "hf/def-tzvp", 4.9799363418100567E-3_wp)
 
 end subroutine test_hf_deftzvp
@@ -242,7 +242,7 @@ subroutine test_hf_def2tzvp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless10")
+   call get_structure(mol, "MB16-43", "10")
    call test_generic(error, mol, "hf/def2-tzvp", 2.1614549442281130E-3_wp)
 
 end subroutine test_hf_def2tzvp
@@ -255,7 +255,7 @@ subroutine test_hf_ccpvdz(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless11")
+   call get_structure(mol, "MB16-43", "11")
    call test_generic(error, mol, "hf/cc-pvdz", 9.5654476866715681E-3_wp)
 
 end subroutine test_hf_ccpvdz
@@ -268,7 +268,7 @@ subroutine test_hf_augccpvdz(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless12")
+   call get_structure(mol, "MB16-43", "12")
    call test_generic(error, mol, "hf/aug-cc-pvdz", 2.6289439007561133E-3_wp)
 
 end subroutine test_hf_augccpvdz
@@ -281,7 +281,7 @@ subroutine test_dft_minis(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless13")
+   call get_structure(mol, "MB16-43", "13")
    call test_generic(error, mol, "dft/minis", 2.8831779044393737E-2_wp)
 
 end subroutine test_dft_minis
@@ -294,7 +294,7 @@ subroutine test_dft_minix(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless14")
+   call get_structure(mol, "MB16-43", "14")
    call test_generic(error, mol, "dft/minix", 1.8191237759356119E-2_wp)
 
 end subroutine test_dft_minix
@@ -307,7 +307,7 @@ subroutine test_dft_sv(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless15")
+   call get_structure(mol, "MB16-43", "15")
    call test_generic(error, mol, "dft/sv", 8.9178105933847233E-3_wp)
 
 end subroutine test_dft_sv
@@ -320,7 +320,7 @@ subroutine test_dft_def2sv_p(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless16")
+   call get_structure(mol, "MB16-43", "16")
    call test_generic(error, mol, "dft/def2-sv(p)", 9.0695660381885229E-3_wp)
 
 end subroutine test_dft_def2sv_p
@@ -333,7 +333,7 @@ subroutine test_dft_def2svp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless17")
+   call get_structure(mol, "MB16-43", "17")
    call test_generic(error, mol, "dft/def2-svp", 2.4834643199826180E-2_wp)
 
 end subroutine test_dft_def2svp
@@ -346,7 +346,7 @@ subroutine test_dft_dzp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless18")
+   call get_structure(mol, "MB16-43", "18")
    call test_generic(error, mol, "dft/dzp", 2.2195075119243783E-2_wp)
 
 end subroutine test_dft_dzp
@@ -359,7 +359,7 @@ subroutine test_dft_deftzvp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless19")
+   call get_structure(mol, "MB16-43", "19")
    call test_generic(error, mol, "dft/def-tzvp", 3.6258064909241677E-3_wp)
 
 end subroutine test_dft_deftzvp
@@ -372,7 +372,7 @@ subroutine test_dft_def2tzvp(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless20")
+   call get_structure(mol, "MB16-43", "20")
    call test_generic(error, mol, "dft/def2-tzvp", 3.9044561047188592E-3_wp)
 
 end subroutine test_dft_def2tzvp
@@ -385,7 +385,7 @@ subroutine test_dft_ccpvdz(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless21")
+   call get_structure(mol, "MB16-43", "21")
    call test_generic(error, mol, "dft/cc-pvdz", 9.9649294926933245E-3_wp)
 
 end subroutine test_dft_ccpvdz
@@ -398,7 +398,7 @@ subroutine test_dft_augccpvdz(error)
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "mindless22")
+   call get_structure(mol, "MB16-43", "22")
    call test_generic(error, mol, "dft/aug-cc-pvdz", 2.9849348931724447E-3_wp)
 
 end subroutine test_dft_augccpvdz
