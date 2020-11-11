@@ -388,17 +388,17 @@ subroutine gcp_egrad(n,max_elem,emiss,xyz,iz,p,gcp,g,grad,echo,xva,xvb,pbc,lat,d
 implicit none
 integer n,iz(n),max_elem,np
 integer iat,jat
-real*8  xyz(3,n), xyzjat(3,n)
+real*8  xyz(3,n), xyzjat(3)
 real*8  g  (3,n)
 real*8  gcp,tg,t0,t1
 real*8  emiss(max_elem),dum22
 real*8  p(4),thrR,thrE
 real*8 xva(*),xvb(*)
 real*8 va,vb
-real*8 r,dx,dy,dz,rscal,rscalexp,rscalexpm1,r0abij
+real*8 r,rscal,rscalexp,rscalexpm1,r0abij
 real*8 tmp,ea,ecp,dum,tmpa,tmpb,dum2,tmpc,tmpd
 real*8 sab,p1,p2,p3,p4,ene_old_num,ene_old_den
-real*8 gs(3),gab,ebas,gbas(3,n)
+real*8 vec(3),gs(3),gab,ebas,gbas(3,n)
 real*8 za(36),zb(36),lat(3,3)
 logical echo,grad,damp,base,pbc
 integer tau_max(3),a,b,c
@@ -469,29 +469,29 @@ if(pbc) then
       ea=0.0d0
       np=0
       ! the BSSE due to atom jat, Loop over all j atoms in supercell
+      do jat=1,n
+      ! # of bf that are available from jat
+      vb=xvb(jat)
+      if(vb.lt.0.5) cycle
       do a=-tau_max(1),tau_max(1)
       do b=-tau_max(2),tau_max(2)
       do c=-tau_max(3),tau_max(3)
-      do jat=1,n
       !remove selfinteraction
       if((iat.eq.jat).and.(abs(a)+abs(b)+abs(c).eq.0)) cycle
-         xyzjat(1,jat)=xyz(1,jat)+a*lat(1,1)+b*lat(2,1)+c*lat(3,1)
-         xyzjat(2,jat)=xyz(2,jat)+a*lat(1,2)+b*lat(2,2)+c*lat(3,2)
-         xyzjat(3,jat)=xyz(3,jat)+a*lat(1,3)+b*lat(2,3)+c*lat(3,3)
+         xyzjat(1)=xyz(1,jat)+a*lat(1,1)+b*lat(2,1)+c*lat(3,1)
+         xyzjat(2)=xyz(2,jat)+a*lat(1,2)+b*lat(2,2)+c*lat(3,2)
+         xyzjat(3)=xyz(3,jat)+a*lat(1,3)+b*lat(2,3)+c*lat(3,3)
 !         write(*,*) 'a1 a2 a3',  lat(1,1),lat(1,2),lat(1,3)
 !         write(*,*) 'b1 b2 b3',  lat(2,1),lat(2,2),lat(2,3)
 !         write(*,*) 'c1 c2 c3',  lat(3,1),lat(3,2),lat(3,3)
 !         stop
-!         xyzjat(1,jat)=xyz(1,jat)+a*lat(1,1)+b*lat(1,2)+c*lat(1,3)
-!         xyzjat(2,jat)=xyz(2,jat)+a*lat(2,1)+b*lat(2,2)+c*lat(2,3)
-!         xyzjat(3,jat)=xyz(3,jat)+a*lat(3,1)+b*lat(3,2)+c*lat(3,3)
-         dx=(xyz(1,iat)-xyzjat(1,jat))
-         dy=(xyz(2,iat)-xyzjat(2,jat))
-         dz=(xyz(3,iat)-xyzjat(3,jat))
-         r=sqrt(dx*dx+dy*dy+dz*dz)
-         ! # of bf that are available from jat
-         vb=xvb(jat)
-         if(vb.lt.0.5) cycle
+!         xyzjat(1)=xyz(1,jat)+a*lat(1,1)+b*lat(1,2)+c*lat(1,3)
+!         xyzjat(2)=xyz(2,jat)+a*lat(2,1)+b*lat(2,2)+c*lat(2,3)
+!         xyzjat(3)=xyz(3,jat)+a*lat(3,1)+b*lat(3,2)+c*lat(3,3)
+         vec(1)=(xyz(1,iat)-xyzjat(1))
+         vec(2)=(xyz(2,iat)-xyzjat(2))
+         vec(3)=(xyz(3,iat)-xyzjat(3))
+         r=sqrt(vec(1)*vec(1)+vec(2)*vec(2)+vec(3)*vec(3))
          ! distance cutoff
          if(r.gt.thrR) cycle
          ! calulate slater overlap sab
@@ -527,9 +527,9 @@ if(pbc) then
             call cpu_time(t0)
             call gsovl(r,iat,jat,iz,za(iz(iat)),zb(iz(jat)),gab)
 
-            gs(1)=gab*dx
-            gs(2)=gab*dy
-            gs(3)=gab*dz
+            gs(1)=gab*vec(1)
+            gs(2)=gab*vec(2)
+            gs(3)=gab*vec(3)
             dum=exp(-p3*r**p4)*(-1d0/2d0)
             dum2=2d0*p3*p4*r**p4*sab/r
             dum22=r*sab**(3d0/2d0)
@@ -541,24 +541,24 @@ if(pbc) then
               grd_dmp=grd_dmp/((dmp_scal*rscalexp+1.0d0)**2)
             endif
 
-            tmpa=dum2*dx+gs(1)
+            tmpa=dum2*vec(1)+gs(1)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(dx/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(vec(1)/r)
             endif
             g(1,iat)=g(1,iat)+tmp*emiss(iz(iat))
 
-            tmpa=dum2*dy+gs(2)
+            tmpa=dum2*vec(2)+gs(2)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(dy/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(vec(2)/r)
             endif
             g(2,iat)=g(2,iat)+tmp*emiss(iz(iat))
 
-            tmpa=dum2*dz+gs(3)
+            tmpa=dum2*vec(3)+gs(3)
             tmp=dum*tmpa/tmpb
             if(damp) then
-              tmp=tmp*dampval+ene_old*grd_dmp*(dz/r)
+              tmp=tmp*dampval+ene_old*grd_dmp*(vec(3)/r)
             endif
             g(3,iat)=g(3,iat)+tmp*emiss(iz(iat))
 
@@ -570,24 +570,24 @@ if(pbc) then
 
             tmpb=dum22*sqrt(va)
 
-            tmpa=dum2*(-dx)-gs(1)
+            tmpa=dum2*(-vec(1))-gs(1)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(-dx/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(-vec(1)/r)
             endif
             g(1,iat)=g(1,iat)-tmp*emiss(iz(jat))
 
-            tmpa=dum2*(-dy)-gs(2)
+            tmpa=dum2*(-vec(2))-gs(2)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(-dy/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(-vec(2)/r)
             endif
             g(2,iat)=g(2,iat)-tmp*emiss(iz(jat))
 
-            tmpa=dum2*(-dz)-gs(3)
+            tmpa=dum2*(-vec(3))-gs(3)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(-dz/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(-vec(3)/r)
             endif
             g(3,iat)=g(3,iat)-tmp*emiss(iz(jat))
 
@@ -616,10 +616,10 @@ else
       ! the BSSE due to atom jat, Loop over all j atoms
       do jat=1,n
          if(iat.eq.jat) cycle
-         dx=(xyz(1,iat)-xyz(1,jat))
-         dy=(xyz(2,iat)-xyz(2,jat))
-         dz=(xyz(3,iat)-xyz(3,jat))
-         r=sqrt(dx*dx+dy*dy+dz*dz)
+         vec(1)=(xyz(1,iat)-xyz(1,jat))
+         vec(2)=(xyz(2,iat)-xyz(2,jat))
+         vec(3)=(xyz(3,iat)-xyz(3,jat))
+         r=sqrt(vec(1)*vec(1)+vec(2)*vec(2)+vec(3)*vec(3))
 
          ! # of bf that are available from jat
          vb=xvb(jat)
@@ -658,9 +658,9 @@ else
             call cpu_time(t0)
             call gsovl(r,iat,jat,iz,za(iz(iat)),zb(iz(jat)),gab)
 
-            gs(1)=gab*dx
-            gs(2)=gab*dy
-            gs(3)=gab*dz
+            gs(1)=gab*vec(1)
+            gs(2)=gab*vec(2)
+            gs(3)=gab*vec(3)
             dum=exp(-p3*r**p4)*(-1d0/2d0)
             dum2=2d0*p3*p4*r**p4*sab/r
             dum22=r*sab**(3d0/2d0)
@@ -672,24 +672,24 @@ else
               grd_dmp=grd_dmp/((dmp_scal*rscalexp+1.0d0)**2)
             endif
 
-            tmpa=dum2*dx+gs(1)
+            tmpa=dum2*vec(1)+gs(1)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(dx/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(vec(1)/r)
             endif
             g(1,iat)=g(1,iat)+tmp*emiss(iz(iat))
 
-            tmpa=dum2*dy+gs(2)
+            tmpa=dum2*vec(2)+gs(2)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(dy/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(vec(2)/r)
             endif
             g(2,iat)=g(2,iat)+tmp*emiss(iz(iat))
 
-            tmpa=dum2*dz+gs(3)
+            tmpa=dum2*vec(3)+gs(3)
             tmp=dum*tmpa/tmpb
             if(damp) then
-              tmp=tmp*dampval+ene_old*grd_dmp*(dz/r)
+              tmp=tmp*dampval+ene_old*grd_dmp*(vec(3)/r)
             endif
             g(3,iat)=g(3,iat)+tmp*emiss(iz(iat))
 
@@ -701,24 +701,24 @@ else
 
             tmpb=dum22*sqrt(va)
 
-            tmpa=dum2*(-dx)-gs(1)
+            tmpa=dum2*(-vec(1))-gs(1)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(-dx/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(-vec(1)/r)
             endif
             g(1,iat)=g(1,iat)-tmp*emiss(iz(jat))
 
-            tmpa=dum2*(-dy)-gs(2)
+            tmpa=dum2*(-vec(2))-gs(2)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(-dy/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(-vec(2)/r)
             endif
             g(2,iat)=g(2,iat)-tmp*emiss(iz(jat))
 
-            tmpa=dum2*(-dz)-gs(3)
+            tmpa=dum2*(-vec(3))-gs(3)
             tmp=dum*tmpa/tmpb
             if(damp) then
-               tmp=tmp*dampval+ene_old*grd_dmp*(-dz/r)
+               tmp=tmp*dampval+ene_old*grd_dmp*(-vec(3)/r)
             endif
             g(3,iat)=g(3,iat)-tmp*emiss(iz(jat))
 
@@ -766,7 +766,7 @@ real*8  emiss(max_elem),dum22
 real*8  p(4),thrR,thrE
 real*8 xva(*),xvb(*)
 real*8 va,vb
-real*8 r,dx,dy,dz
+real*8 r,vec(3)
 real*8 tmp,ea,ecp,dum,tmpa,tmpb,dum2
 real*8 sab,p1,p2,p3,p4,dmp_scal,dmp_exp
 real*8 gs(3),gab
@@ -3431,14 +3431,14 @@ end function
 subroutine basegrad(n,max_elem,iz,coord,lat,pbc,rscal,qscal,e,g,echo)
 implicit none
 integer n,max_elem,maxat,iz(*)
-real*8 coord(3,*),e,g(3,*),lat(3,3),xyzjat(3,n)
+real*8 coord(3,*),e,g(3,*),lat(3,3),xyzjat(3)
 real*8 rscal,qscal
-real*8 fi,fj,ff,rf,r
+real*8 fi,fj,ff,rf,r,expt
 !c cut-off radii for all element pairs
 real*8 r0ab(max_elem,max_elem),autoang
 parameter (autoang =0.5291772083d0)
 logical echo,pbc
-real*8 r0,thrR,dx,dy,dz
+real*8 r0,thrR,vec(3)
 integer i,j,tau_max(3),a,b,c
 
 !threshold
@@ -3458,34 +3458,39 @@ if(pbc) then
   ! Loop over all i atoms
   do i=1,n
   ! the BSSE due to atom jat, Loop over all j atoms in supercell
+  do j=1,i
+  if(iz(i).lt.1.or.iz(i).gt.18) cycle
+  if(iz(j).lt.1.or.iz(j).gt.18) cycle
+  fi=float(iz(i))
+  fj=float(iz(j))
+  if (i.eq.j) then
+     ff=-0.5d0*(fi*fj)**1.5d0
+  else
+     ff=-(fi*fj)**1.5d0
+  end if
+  r0=rscal*r0ab(iz(i),iz(j))**0.75d0
   do a=-tau_max(1),tau_max(1)
   do b=-tau_max(2),tau_max(2)
   do c=-tau_max(3),tau_max(3)
-  do j=1,n
-  if(iz(i).lt.1.or.iz(i).gt.18) cycle
-  if(iz(j).lt.1.or.iz(j).gt.18) cycle
   !remove selfinteraction
   if((i.eq.j).and.(abs(a)+abs(b)+abs(c).eq.0)) cycle
-     xyzjat(1,j)=coord(1,j)+a*lat(1,1)+b*lat(2,1)+c*lat(3,1)
-     xyzjat(2,j)=coord(2,j)+a*lat(1,2)+b*lat(2,2)+c*lat(3,2)
-     xyzjat(3,j)=coord(3,j)+a*lat(1,3)+b*lat(2,3)+c*lat(3,3)
-     dx=(coord(1,i)-xyzjat(1,j))
-     dy=(coord(2,i)-xyzjat(2,j))
-     dz=(coord(3,i)-xyzjat(3,j))
-     r=sqrt(dx*dx+dy*dy+dz*dz)
+     xyzjat(1)=coord(1,j)+a*lat(1,1)+b*lat(2,1)+c*lat(3,1)
+     xyzjat(2)=coord(2,j)+a*lat(1,2)+b*lat(2,2)+c*lat(3,2)
+     xyzjat(3)=coord(3,j)+a*lat(1,3)+b*lat(2,3)+c*lat(3,3)
+     vec(1)=(coord(1,i)-xyzjat(1))
+     vec(2)=(coord(2,i)-xyzjat(2))
+     vec(3)=(coord(3,i)-xyzjat(3))
+     r=sqrt(vec(1)*vec(1)+vec(2)*vec(2)+vec(3)*vec(3))
      if(r.gt.thrR) cycle
-     r0=rscal*r0ab(iz(i),iz(j))**0.75d0
-     fi=float(iz(i))
-     fj=float(iz(j))
-     ff=-0.5d0*(fi*fj)**1.5d0
-     e=e+ff*exp(-r0*r)
+     expt=exp(-r0*r)
+     e=e+ff*expt
      rf=qscal/r
-     g(1,i)=g(1,i)-ff*r0*(coord(1,i)-coord(1,j))*exp(-r0*r)*rf
-     g(1,j)=g(1,j)-ff*r0*(coord(1,j)-coord(1,i))*exp(-r0*r)*rf
-     g(2,i)=g(2,i)-ff*r0*(coord(2,i)-coord(2,j))*exp(-r0*r)*rf
-     g(2,j)=g(2,j)-ff*r0*(coord(2,j)-coord(2,i))*exp(-r0*r)*rf
-     g(3,i)=g(3,i)-ff*r0*(coord(3,i)-coord(3,j))*exp(-r0*r)*rf
-     g(3,j)=g(3,j)-ff*r0*(coord(3,j)-coord(3,i))*exp(-r0*r)*rf
+     g(1,i)=g(1,i)-ff*r0*vec(1)*expt*rf
+     g(1,j)=g(1,j)+ff*r0*vec(1)*expt*rf
+     g(2,i)=g(2,i)-ff*r0*vec(2)*expt*rf
+     g(2,j)=g(2,j)+ff*r0*vec(2)*expt*rf
+     g(3,i)=g(3,i)-ff*r0*vec(3)*expt*rf
+     g(3,j)=g(3,j)+ff*r0*vec(3)*expt*rf
   enddo
   enddo
   enddo
@@ -3497,22 +3502,24 @@ do i=1,n-1
  do j=i+1,n
   if(iz(i).lt.1.or.iz(i).gt.18) cycle
   if(iz(j).lt.1.or.iz(j).gt.18) cycle
-  r=sqrt( (coord(1,i)-coord(1,j))**2 &
-         +(coord(2,i)-coord(2,j))**2 &
-         +(coord(3,i)-coord(3,j))**2)
+  vec(1)=coord(1,i)-coord(1,j)
+  vec(2)=coord(2,i)-coord(2,j)
+  vec(3)=coord(3,i)-coord(3,j)
+  r=sqrt(vec(1)*vec(1)+vec(2)*vec(2)+vec(3)*vec(3))
   if(r.gt.thrR) cycle
   r0=rscal*r0ab(iz(i),iz(j))**0.75d0
   fi=float(iz(i))
   fj=float(iz(j))
   ff=-(fi*fj)**1.5d0
-  e=e+ff*exp(-r0*r)
+  expt=exp(-r0*r)
+  e=e+ff*expt
   rf=qscal/r
-  g(1,i)=g(1,i)-ff*r0*(coord(1,i)-coord(1,j))*exp(-r0*r)*rf
-  g(1,j)=g(1,j)-ff*r0*(coord(1,j)-coord(1,i))*exp(-r0*r)*rf
-  g(2,i)=g(2,i)-ff*r0*(coord(2,i)-coord(2,j))*exp(-r0*r)*rf
-  g(2,j)=g(2,j)-ff*r0*(coord(2,j)-coord(2,i))*exp(-r0*r)*rf
-  g(3,i)=g(3,i)-ff*r0*(coord(3,i)-coord(3,j))*exp(-r0*r)*rf
-  g(3,j)=g(3,j)-ff*r0*(coord(3,j)-coord(3,i))*exp(-r0*r)*rf
+  g(1,i)=g(1,i)-ff*r0*vec(1)*expt*rf
+  g(1,j)=g(1,j)+ff*r0*vec(1)*expt*rf
+  g(2,i)=g(2,i)-ff*r0*vec(2)*expt*rf
+  g(2,j)=g(2,j)+ff*r0*vec(2)*expt*rf
+  g(3,i)=g(3,i)-ff*r0*vec(3)*expt*rf
+  g(3,j)=g(3,j)+ff*r0*vec(3)*expt*rf
   enddo
 enddo
 e=e*qscal

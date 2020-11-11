@@ -30,6 +30,7 @@ endif
 mstore_dep = mstore_prj.get_variable('mstore_dep')
 
 tests = [
+  'gcp-gradient',
   'gcp-hf-methods',
   'gcp-dft-methods',
   'gcp-3c-methods',

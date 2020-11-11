@@ -19,6 +19,7 @@ program tester
    use, intrinsic :: iso_fortran_env, only : error_unit
    use mctc_env_testing, only : run_testsuite, new_testsuite, testsuite_type, &
       & select_suite, run_selected
+   use test_gcp_gradient, only : collect_gcp_gradient
    use test_gcp_hf_methods, only : collect_gcp_hf_methods
    use test_gcp_dft_methods, only : collect_gcp_dft_methods
    use test_gcp_3c_methods, only : collect_gcp_3c_methods
@@ -31,6 +32,7 @@ program tester
    stat = 0
 
    testsuites = [ &
+      & new_testsuite("gcp-gradient", collect_gcp_gradient), &
       & new_testsuite("gcp-hf-methods", collect_gcp_hf_methods), &
       & new_testsuite("gcp-dft-methods", collect_gcp_dft_methods), &
       & new_testsuite("gcp-3c-methods", collect_gcp_3c_methods) &
