@@ -23,6 +23,7 @@ program tester
    use test_gcp_hf_methods, only : collect_gcp_hf_methods
    use test_gcp_dft_methods, only : collect_gcp_dft_methods
    use test_gcp_3c_methods, only : collect_gcp_3c_methods
+   use test_gcp_pbc, only : collect_gcp_pbc
    implicit none
    integer :: stat, is
    character(len=:), allocatable :: suite_name, test_name
@@ -35,7 +36,8 @@ program tester
       & new_testsuite("gcp-gradient", collect_gcp_gradient), &
       & new_testsuite("gcp-hf-methods", collect_gcp_hf_methods), &
       & new_testsuite("gcp-dft-methods", collect_gcp_dft_methods), &
-      & new_testsuite("gcp-3c-methods", collect_gcp_3c_methods) &
+      & new_testsuite("gcp-3c-methods", collect_gcp_3c_methods), &
+      & new_testsuite("gcp-pbc", collect_gcp_pbc) &
       & ]
 
    call get_argument(1, suite_name)

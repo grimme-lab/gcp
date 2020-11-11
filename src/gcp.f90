@@ -3731,13 +3731,15 @@ close(3)
 end subroutine rdcoordvasp
 
 
-SUBROUTINE criteria(r_cutoff,lat,tau_max)
+SUBROUTINE criteria(r_cutoff,lat_trans,tau_max)
 
 REAL*8 :: r_cutoff
 REAL*8 :: lat(3,3)
+REAL*8 :: lat_trans(3,3)
 integer :: tau_max(3)
 REAL*8 :: norm1(3),norm2(3),norm3(3)
 REAL*8 :: cos10,cos21,cos32
+lat = transpose(lat_trans)
 
 !c find normal to the plane...
 call crossprodukt(lat(:,2),lat(:,3),norm1)

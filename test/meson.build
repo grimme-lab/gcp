@@ -34,6 +34,7 @@ tests = [
   'gcp-hf-methods',
   'gcp-dft-methods',
   'gcp-3c-methods',
+  'gcp-pbc',
 ]
 
 test_srcs = files(

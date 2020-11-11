@@ -14,7 +14,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with mctc-gcp.  If not, see <https://www.gnu.org/licenses/>.
 
-module test_gcp_3c_methods
+module test_gcp_pbc
    use mctc_env, only : wp
    use mctc_env_testing, only : new_unittest, unittest_type, error_type, check
    use mctc_io_structure, only : structure_type
@@ -23,7 +23,7 @@ module test_gcp_3c_methods
    implicit none
    private
 
-   public :: collect_gcp_3c_methods
+   public :: collect_gcp_pbc
 
    real(wp), parameter :: thr = 100*epsilon(1.0_wp)
 
@@ -32,23 +32,22 @@ contains
 
 
 !> Collect all exported unit tests
-subroutine collect_gcp_3c_methods(testsuite)
+subroutine collect_gcp_pbc(testsuite)
 
    !> Collection of tests
    type(unittest_type), allocatable, intent(out) :: testsuite(:)
 
    testsuite = [ &
-      & new_unittest("HF-3c", test_hf3c), &
-      & new_unittest("HF-3c (PBC)", test_hf3c_pbc), &
-      & new_unittest("PBEh-3c", test_pbeh3c), &
-      & new_unittest("PBEh-3c (PBC)", test_pbeh3c_pbc), &
-      & new_unittest("HSE-3c", test_hse3c), &
-      & new_unittest("HSE-3c (PBC)", test_hse3c_pbc), &
-      & new_unittest("r2SCAN-3c", test_r2scan3c), &
-      & new_unittest("r2SCAN-3c (PBC)", test_r2scan3c_pbc) &
+      & new_unittest("anthracene", test_anthracene), &
+      & new_unittest("ethcar", test_ethcar), &
+      & new_unittest("formamide", test_formamide), &
+      & new_unittest("hexdio", test_hexdio), &
+      & new_unittest("naph", test_naph), &
+      & new_unittest("oxacb", test_oxacb), &
+      & new_unittest("trioxane", test_trioxane) &
       & ]
 
-end subroutine collect_gcp_3c_methods
+end subroutine collect_gcp_pbc
 
 
 subroutine test_generic(error, mol, method, energy_ref)
@@ -91,108 +90,95 @@ subroutine test_generic(error, mol, method, energy_ref)
 end subroutine test_generic
 
 
-subroutine test_hf3c(error)
+subroutine test_anthracene(error)
 
    !> Error handling
    type(error_type), allocatable, intent(out) :: error
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "MB16-43", "01")
-   call test_generic(error, mol, "hf3c", -0.10185940933506053_wp)
+   call get_structure(mol, "X23", "anthracene")
+   call test_generic(error, mol, "hf3c", -0.92569438699860529_wp)
 
-end subroutine test_hf3c
-
-
-subroutine test_pbeh3c(error)
-
-   !> Error handling
-   type(error_type), allocatable, intent(out) :: error
-
-   type(structure_type) :: mol
-
-   call get_structure(mol, "MB16-43", "02")
-   call test_generic(error, mol, "pbeh3c", 2.0602039298887861E-2_wp)
-
-end subroutine test_pbeh3c
+end subroutine test_anthracene
 
 
-subroutine test_hse3c(error)
+subroutine test_ethcar(error)
 
    !> Error handling
    type(error_type), allocatable, intent(out) :: error
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "MB16-43", "03")
-   call test_generic(error, mol, "hse3c", 1.9885888051458127E-2_wp)
+   call get_structure(mol, "X23", "ethcar")
+   call test_generic(error, mol, "hf3c", -0.26393725722798922_wp)
 
-end subroutine test_hse3c
-
-
-subroutine test_r2scan3c(error)
-
-   !> Error handling
-   type(error_type), allocatable, intent(out) :: error
-
-   type(structure_type) :: mol
-
-   call get_structure(mol, "MB16-43", "04")
-   call test_generic(error, mol, "def2mtzvpp", 1.1501835545305577E-2_wp)
-
-end subroutine test_r2scan3c
+end subroutine test_ethcar
 
 
-subroutine test_hf3c_pbc(error)
+subroutine test_formamide(error)
 
    !> Error handling
    type(error_type), allocatable, intent(out) :: error
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "X23", "acetic")
-   call test_generic(error, mol, "hf3c", -0.39914501373759642_wp)
+   call get_structure(mol, "X23", "formamide")
+   call test_generic(error, mol, "hf3c", -0.29006658275561281_wp)
 
-end subroutine test_hf3c_pbc
-
-
-subroutine test_pbeh3c_pbc(error)
-
-   !> Error handling
-   type(error_type), allocatable, intent(out) :: error
-
-   type(structure_type) :: mol
-
-   call get_structure(mol, "X23", "adaman")
-   call test_generic(error, mol, "pbeh3c", 9.6863188972415457E-2_wp)
-
-end subroutine test_pbeh3c_pbc
+end subroutine test_formamide
 
 
-subroutine test_hse3c_pbc(error)
+subroutine test_hexdio(error)
 
    !> Error handling
    type(error_type), allocatable, intent(out) :: error
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "X23", "ammonia")
-   call test_generic(error, mol, "hse3c", 2.0735966360832053E-2_wp)
+   call get_structure(mol, "X23", "hexdio")
+   call test_generic(error, mol, "hf3c", -0.18028851452622813_wp)
 
-end subroutine test_hse3c_pbc
+end subroutine test_hexdio
 
 
-subroutine test_r2scan3c_pbc(error)
+subroutine test_naph(error)
 
    !> Error handling
    type(error_type), allocatable, intent(out) :: error
 
    type(structure_type) :: mol
 
-   call get_structure(mol, "X23", "benzene")
-   call test_generic(error, mol, "def2mtzvpp", 1.1008015279278560E-2_wp)
+   call get_structure(mol, "X23", "naph")
+   call test_generic(error, mol, "hf3c", -1.3397571928969214_wp)
 
-end subroutine test_r2scan3c_pbc
+end subroutine test_naph
 
 
-end module test_gcp_3c_methods
+subroutine test_oxacb(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+
+   call get_structure(mol, "X23", "oxacb")
+   call test_generic(error, mol, "hf3c", -0.27269534244235344_wp)
+
+end subroutine test_oxacb
+
+
+subroutine test_trioxane(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+
+   call get_structure(mol, "X23", "trioxane")
+   call test_generic(error, mol, "hf3c", -1.7371614624825549_wp)
+
+end subroutine test_trioxane
+
+
+end module test_gcp_pbc

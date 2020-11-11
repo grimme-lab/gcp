@@ -15,7 +15,7 @@
 ! along with mctc-gcp.  If not, see <https://www.gnu.org/licenses/>.
 
 program gcp_main
-use strings
+use gcp_strings
 use gcp
 implicit none
 integer n,maxat
