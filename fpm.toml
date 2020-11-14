@@ -4,11 +4,11 @@ license = "GPL-3.0-or-later"
 
 [dependencies]
 [dependencies.mctc-lib]
-git = "git@github.com:grimme-lab/mctc-lib"
+git = "https://github.com/grimme-lab/mctc-lib"
 
 [dev-dependencies]
 [dev-dependencies.mstore]
-git = "git@github.com:grimme-lab/mstore"
+git = "https://github.com/grimme-lab/mstore"
 
 [[executable]]
 name = "mctc-gcp"
