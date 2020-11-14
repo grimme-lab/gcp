@@ -42,6 +42,7 @@ subroutine collect_gcp_gradient(testsuite)
       & new_unittest("HF/DZ", test_hf_dz), &
       & new_unittest("DFT/SV", test_dft_sv), &
       & new_unittest("HF-3c", test_hf3c), &
+      & new_unittest("B97-3c", test_b973c), &
       & new_unittest("HSE-3c", test_hse3c) &
       & ]
 
@@ -158,6 +159,19 @@ subroutine test_hf3c(error)
    call test_numgrad(error, mol, "hf3c")
 
 end subroutine test_hf3c
+
+
+subroutine test_b973c(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+
+   call get_structure(mol, "MB16-43", "03")
+   call test_numgrad(error, mol, "b973c")
+
+end subroutine test_b973c
 
 
 end module test_gcp_gradient

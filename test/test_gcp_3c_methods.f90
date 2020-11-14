@@ -44,6 +44,8 @@ subroutine collect_gcp_3c_methods(testsuite)
       & new_unittest("PBEh-3c (PBC)", test_pbeh3c_pbc), &
       & new_unittest("HSE-3c", test_hse3c), &
       & new_unittest("HSE-3c (PBC)", test_hse3c_pbc), &
+      & new_unittest("B97-3c", test_b973c), &
+      & new_unittest("B97-3c (PBC)", test_b973c_pbc), &
       & new_unittest("r2SCAN-3c", test_r2scan3c), &
       & new_unittest("r2SCAN-3c (PBC)", test_r2scan3c_pbc) &
       & ]
@@ -143,6 +145,19 @@ subroutine test_r2scan3c(error)
 end subroutine test_r2scan3c
 
 
+subroutine test_b973c(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+
+   call get_structure(mol, "MB16-43", "05")
+   call test_generic(error, mol, "b973c", -3.6973735977079793E-2_wp)
+
+end subroutine test_b973c
+
+
 subroutine test_hf3c_pbc(error)
 
    !> Error handling
@@ -193,6 +208,19 @@ subroutine test_r2scan3c_pbc(error)
    call test_generic(error, mol, "def2mtzvpp", 1.1008015279278560E-2_wp)
 
 end subroutine test_r2scan3c_pbc
+
+
+subroutine test_b973c_pbc(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+
+   call get_structure(mol, "X23", "CO2")
+   call test_generic(error, mol, "b973c", -4.7346715088819775E-2_wp)
+
+end subroutine test_b973c_pbc
 
 
 end module test_gcp_3c_methods

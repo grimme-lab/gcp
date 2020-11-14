@@ -176,7 +176,7 @@ subroutine test_trioxane(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "trioxane")
-   call test_generic(error, mol, "hf3c", -1.7371614624825549_wp)
+   call test_generic(error, mol, "b973c", -0.36904665894177763_wp)
 
 end subroutine test_trioxane
 

@@ -58,12 +58,15 @@ character*80 arg(10)
 character*80 atmp,ftmp,dtmp
 character*80 basname
 !v2.0 stuff
-logical tmen,base,damp,stress,parfile,newgcp
+logical tmen,base,damp,stress,parfile,srb,newgcp
 character*80 args(90), comment, line
 real*8 er,el,ebas,gbas(3,n)
 integer nargs, ios
-real*8 dmp_scal,dmp_exp
+real*8 dmp_scal,dmp_exp,rscal,qscal
 
+
+!default no srvb
+srb=.false.
 !damping params
 dmp_scal=4.0d0  ! 4
 dmp_exp=6.0d0   ! 6
@@ -99,10 +102,19 @@ damp=.true.
 !JGB special method combination 3: B3PBE-3c
 !if(echo) write(*,*) ' Perform special gCP(damped) correction for B3PBE-3c'
 !damp=.true.
+case('b973c')
+!JGB special method combination 4: B97-3c
+!JGB no gCP needed, switch to SRB correction
+if(echo) write(*,*) ' Perform special SRB correction for B97-3c '
+srb=.true.
+rscal=10.00d0
+qscal=0.08d0
 case default
 end select
 
 
+!skip for B97-3c
+if(.not.srb) then
 !get parameters
 !****************************************************************************
 !* read parameter file                                                      *
@@ -271,6 +283,8 @@ do i=1,n
 enddo
 xvb=xva
 
+endif !B97-3c
+
 !*********************************
 !* Parameter handling/setup done *
 !*********************************
@@ -280,15 +294,21 @@ xvb=xva
      write(*,'(2x,''Nbf   '',3x,I12)')  nb
      write(*,'(2x,''Atoms '',3x,I12)')  n
      write(*,*)''
-     write(*,'(2x,a)') 'Parameters: '
-     write(*,'(2x,a,2x,f10.4)') 'sigma   ',p(1)
-     write(*,'(2x,a,2x,f10.4)') 'eta     ',p(2)
-     write(*,'(2x,a,2x,f10.4)') 'alpha   ',p(3)
-     write(*,'(2x,a,2x,f10.4)') 'beta    ',p(4)
-   if(damp) then
-     write(*,'(2x,a,2x,f10.4)') 'dmp_scal',dmp_scal
-     write(*,'(2x,a,2x,f10.4)') 'dmp_exp ',dmp_exp
-   endif
+     if(.not.srb) then
+        write(*,'(2x,a)') 'Parameters: '
+        write(*,'(2x,a,2x,f10.4)') 'sigma   ',p(1)
+        write(*,'(2x,a,2x,f10.4)') 'eta     ',p(2)
+        write(*,'(2x,a,2x,f10.4)') 'alpha   ',p(3)
+        write(*,'(2x,a,2x,f10.4)') 'beta    ',p(4)
+        if(damp) then
+           write(*,'(2x,a,2x,f10.4)') 'dmp_scal',dmp_scal
+           write(*,'(2x,a,2x,f10.4)') 'dmp_exp ',dmp_exp
+        endif
+     else
+        write(*,'(/2x,a22)')'Parameters for SRB: '
+        write(*,'(2x,a,2x,f10.4)') 'rscal',rscal
+        write(*,'(2x,a,2x,f10.4)') 'qscal',qscal
+     endif
      write(*,*)''
    endif
 
@@ -297,6 +317,8 @@ xvb=xva
 ! **************************
 ! * print parameter table  *
 ! **************************
+
+if(.not.srb) then
 if(echo) then
   write(*,*) ' '
   write(*,*) 'element parameters ',trim(method)
@@ -307,6 +329,7 @@ if(echo) then
                                            esym(i+2), emiss(i+2),nbas(i+2)
   enddo
   write(*,*) ' '
+endif
 endif
 
 
@@ -330,8 +353,11 @@ endif
 !**************************
 gcp_g(1:3,1:n)=0.0d0
 gcp_e=0.0d0
-call gcp_egrad(n,max_elem,emiss,xyz,iz,p,gcp_e,gcp_g,dograd,echo,xva,xvb,pbc,lat,damp,base,dmp_scal,dmp_exp)
-
+if(srb) then
+   call srb_egrad2(xyz,iz,lat,n,gcp_e,gcp_g,dograd,rscal,qscal,echo,pbc)
+else
+   call gcp_egrad(n,max_elem,emiss,xyz,iz,p,gcp_e,gcp_g,dograd,echo,xva,xvb,pbc,lat,damp,base,dmp_scal,dmp_exp)
+endif
 !*************************
 !* calc num. cell stress *
 !*************************
@@ -4654,4 +4680,150 @@ real*8 r0ab(4465)
       enddo
 
       end subroutine setr0ab
+
+
+! short-range bond length correction
+! modified form derived from HF-3c SRB potential
+! requires TRUE ordinal numbers in array iz
+! the empirical parameters are qscal (prefactor) and rscal (radii scaling)
+! SG, Nov. 2016
+subroutine srb_egrad2(xyz,iz,Hlat,n,energy,g,grad,rscal,qscal,echo,pbc)
+IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+parameter (autokcal=627.509541d0,max_elem=94,max_para=36)
+DIMENSION XYZ(3,N),G(3,N),Hlat(3,3),IZ(N),ITAU_MAX(3),pp(max_elem),co(n)
+REAL*8,DIMENSION(:,:),ALLOCATABLE :: r0ab
+integer version,iz
+logical echo,grad,pbc
+character*2  esym
+!AUTOANG=PAR(32)
+parameter (AUTOANG =0.5291772083d0)
+
+! Two threshold. thrR: distance cutoff thrE: numerical noise cutoff
+thrR=30.0d0            ! X bohr
+thrE=epsilon(1.d0)
+energy=0.0d0
+g=0.0d0
+
+!Determine supercell
+Itau_max=0
+if(pbc) then
+call criteria(thrR,Hlat,Itau_max)
+endif
+!get R0AB radii
+allocate(R0AB(MAX_ELEM,MAX_ELEM))
+!CALL CRYALLOC(R0AB,MAX_ELEM,MAX_ELEM,'SRB_EGRAD','R0AB')
+call setr0ab(max_elem,AUTOANG,r0ab)
+!call setr0ab(max_elem,r0ab)
+
+!Parameter for B97-3c
+!paramter of the method are rscal and qscal
+!if(echo) then
+!   write(IOUT,'(2x,a18)')'Parameter for SRB: '
+!   write(IOUT,'(2x,a6,f10.4)')'rscal ',rscal
+!   write(IOUT,'(2x,a6,f10.4)')'qscal ',qscal
+!endif
+ethr=0.d0
+
+!loop over all i atoms
+if (pbc) then
+do iat=1,n
+! all elements
+!   if(iz(iat).lt.1.or.iz(iat).gt.18) cycle
+   ! the SRB  due to atom jat, Loop over all j atoms in supercell
+   ITAU1=Itau_max(1)
+   ITAU2=Itau_max(2)
+   ITAU3=Itau_max(3)
+   do i=-Itau1,Itau1
+      do j=-Itau2,Itau2
+         do k=-Itau3,Itau3
+            do jat=1,n
+!               if(iz(jat).lt.1.or.iz(jat).gt.18) cycle
+               iselftest=0
+               ! Test for equal atoms, remove selfinteraction
+               if(iat.eq.jat) then
+                  iselftest=iselftest+1
+                  if(i.eq.0)iselftest=iselftest+1
+                  if(j.eq.0)iselftest=iselftest+1
+                  if(k.eq.0)iselftest=iselftest+1
+               end if
+               if(iselftest.eq.4)cycle
+               dx=xyz(1,iat)-xyz(1,jat)+i*Hlat(1,1)+j*Hlat(2,1)+k*Hlat(3,1)
+               dy=xyz(2,iat)-xyz(2,jat)+i*Hlat(1,2)+j*Hlat(2,2)+k*Hlat(3,2)
+               dz=xyz(3,iat)-xyz(3,jat)+i*Hlat(1,3)+j*Hlat(2,3)+k*Hlat(3,3)
+               r=sqrt(dx*dx+dy*dy+dz*dz)
+               ! distance cutoff
+               if(r.gt.thrR) cycle
+! Do SRB for B97-3c
+               r0abij=r0ab(iz(iat),iz(jat))
+               r0=rscal/r0ab(iz(iat),iz(jat))
+               fi=real(iz(iat))
+               fj=real(iz(jat))
+               ff=-(fi*fj)**0.5d0
+               ener_dum=qscal*ff*exp(-r0*r)
+               !factor 1/2 from double counting
+               ener_dum=ener_dum*0.5d0
+               if(abs(ener_dum).lt.Ethr) cycle
+               co(iat)=co(iat)+ener_dum
+               energy=energy+ener_dum
+               if(grad) then
+                  rf=qscal/r
+                  g(1,iat)=g(1,iat)-ff*r0*dx*exp(-r0*r)*rf
+                  g(2,iat)=g(2,iat)-ff*r0*dy*exp(-r0*r)*rf
+                  g(3,iat)=g(3,iat)-ff*r0*dz*exp(-r0*r)*rf
+               endif
+            enddo !jat
+         enddo !k
+      enddo !j
+   enddo !i
+enddo !iat
+else
+do iat=1,n
+! all elements
+!   if(iz(iat).lt.1.or.iz(iat).gt.18) cycle
+   ! the SRB  due to atom jat, Loop over all j atoms in supercell
+   do jat=1,n
+      !               if(iz(jat).lt.1.or.iz(jat).gt.18) cycle
+      ! Test for equal atoms, remove selfinteraction
+      if(iat.eq.jat) then
+         cycle
+      end if
+      dx=xyz(1,iat)-xyz(1,jat)
+      dy=xyz(2,iat)-xyz(2,jat)
+      dz=xyz(3,iat)-xyz(3,jat)
+      r=sqrt(dx*dx+dy*dy+dz*dz)
+      ! distance cutoff
+      if(r.gt.thrR) cycle
+      ! Do SRB for B97-3c
+      r0abij=r0ab(iz(iat),iz(jat))
+      r0=rscal/r0ab(iz(iat),iz(jat))
+      fi=real(iz(iat))
+      fj=real(iz(jat))
+      ff=-(fi*fj)**0.5d0
+      ener_dum=qscal*ff*exp(-r0*r)
+      !factor 1/2 from double counting
+      ener_dum=ener_dum*0.5d0
+      if(abs(ener_dum).lt.Ethr) cycle
+      co(iat)=co(iat)+ener_dum
+      energy=energy+ener_dum
+      if(grad) then
+         rf=qscal/r
+         g(1,iat)=g(1,iat)-ff*r0*dx*exp(-r0*r)*rf
+         g(2,iat)=g(2,iat)-ff*r0*dy*exp(-r0*r)*rf
+         g(3,iat)=g(3,iat)-ff*r0*dz*exp(-r0*r)*rf
+      endif
+   enddo !jat
+enddo !iat
+end if
+if(echo)then
+   write(IOUT,'(/2x,a5,2x,a5,4x,a15)') &
+        '#','ON','SRB [kcal/mol]'
+   do i=1,n
+      write(IOUT,'(2x,2(i5,2x),F9.3)') i,iz(i),co(i)*AUTOKCAL
+   enddo
+!   write(IOUT,*)'** SRB correction **'
+!   write(IOUT,'(2x,a7,F18.10,'' / (a.u.) || '',x,F11.4,'' / (kcal/mol)'')')'Esrb:  ',energy,energy*AUTOKCAL
+!   if(grad)write(IOUT,*)'|G|=',sum(abs(g(1:3,1:n)))
+endif
+
+end subroutine srb_egrad2
 end module gcp

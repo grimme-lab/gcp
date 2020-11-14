@@ -24,10 +24,10 @@ module gcp_version
 
 
    !> String representation of the mctc-gcp version
-   character(len=*), parameter :: gcp_version_string = "2.1.0"
+   character(len=*), parameter :: gcp_version_string = "2.1.1"
 
    !> Numeric representation of the mctc-gcp version
-   integer, parameter :: gcp_version_compact(3) = [2, 1, 0]
+   integer, parameter :: gcp_version_compact(3) = [2, 1, 1]
 
 
 contains
