@@ -74,6 +74,17 @@ if install
     gcp_lib,
     description: 'Geometrical counterpoise correction',
   )
+
+  asciidoc = find_program('asciidoctor', required: false)
+  if asciidoc.found()
+    install_man(
+      configure_file(
+        command: [asciidoc, '-b', 'manpage', '@INPUT@', '-o', '@OUTPUT@'],
+        input: files('man/mctc-gcp.1.adoc'),
+        output: '@BASENAME@',
+      )
+    )
+  endif
 endif
 
 # add the testsuite

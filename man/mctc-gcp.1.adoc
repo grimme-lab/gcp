@@ -1,0 +1,44 @@
+= mctc-gcp(1)
+
+== Name
+mctc-gcp - Geometrical counterpoise correction program.
+
+
+== Synopsis
+*mctc-gcp* [_options_] _input_
+
+
+== Description
+
+Takes an geometry input to calculate the counterpoise correction.
+Periodic calculations are performed automatically for periodic input formats
+Specify the level of your calculation to select the correct parameters.
+
+
+== Options
+
+*-i, --input* _format_::
+Hint for the format of the input file
+
+*-l, --level* _method_::
+specify method to correct for,
+if not present or set to _file_, local parameters are used,
+local parameters are read from `~/.gcppar.$HOSTNAME`
+
+*--grad*::
+request gradient evaluation
+
+*--hess*::
+request hessian evaluation
+
+*--noprint*::
+Reduce printout, only print warnings
+
+*--parfile*::
+write `gcp.param` file
+
+*--version*::
+Print program version and exit
+
+*--help*::
+Show this help message
