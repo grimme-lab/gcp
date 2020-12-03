@@ -140,7 +140,7 @@ subroutine test_r2scan3c(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "04")
-   call test_generic(error, mol, "def2mtzvpp", 1.1501835545305577E-2_wp)
+   call test_generic(error, mol, "r2scan3c", 1.1501835545305577E-2_wp)
 
 end subroutine test_r2scan3c
 
@@ -205,7 +205,7 @@ subroutine test_r2scan3c_pbc(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "benzene")
-   call test_generic(error, mol, "def2mtzvpp", 1.1008015279278560E-2_wp)
+   call test_generic(error, mol, "mtzvpp", 1.1008015279278560E-2_wp)
 
 end subroutine test_r2scan3c_pbc
 

@@ -257,7 +257,7 @@ if(nb.lt.1) error stop 'Nbf setup gone wrong'
 ! set virtuals and look for missing parameters
 xva=0
 do i=1,n
-  if(method.eq.'def2mtzvpp')then  !SG
+  if(method.eq.'def2mtzvpp'.or.method.eq.'mtzvpp'.or.method.eq.'r2scan3c')then  !SG
    xva(i)=1.0d0                   !SG
    if(iz(i).eq.6) xva(i)=3.0d0    !SG
    if(iz(i).eq.7) xva(i)=0.5d0    !SG
@@ -1614,7 +1614,7 @@ case('msvp')
 case('def2mtzvp')
   emiss(1:apar)=HFdef2mtzvp(1:apar)
   nbas(1:apar)=BASdef2mtzvp(1:apar)
-case('def2mtzvpp')  !SG
+case('def2mtzvpp','mtzvpp','r2scan3c')  !SG
   emiss(1:apar)=def2mtzvpp(1:apar)
   nbas(1:apar)=1
   p(1)=1.0000d0

@@ -17,7 +17,7 @@
 project(
   'mctc-gcp',
   'fortran',
-  version: '2.1.1',
+  version: '2.1.2',
   license: 'GPL-3.0-or-later',
   meson_version: '>=0.53',
   default_options: [
