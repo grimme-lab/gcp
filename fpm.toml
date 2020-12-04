@@ -14,8 +14,3 @@ git = "https://github.com/grimme-lab/mstore"
 name = "mctc-gcp"
 main = "main.f90"
 source-dir = "app"
-
-[[executable]]
-name = "gcp"
-main = "main.f90"
-source-dir = "old"
