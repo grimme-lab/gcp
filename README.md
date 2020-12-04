@@ -1,5 +1,7 @@
 # Geometrical Counter-Poise Correction
 
+[![GPL-3.0-or-later](https://img.shields.io/github/license/grimme-lab/gcp)](LICENSE)
+[![CI](https://github.com/grimme-lab/gcp/workflows/CI/badge.svg)](https://github.com/grimme-lab/gcp/actions)
 [![DOI](https://img.shields.io/badge/DOI-10.1063%2F1.3700154-blue)](https://doi.org/10.1063/1.3700154)
 [![DOI](https://img.shields.io/badge/DOI-10.1021%2Fjp406658y-blue)](https://doi.org/10.1021/jp406658y)
 
@@ -33,30 +35,64 @@ meson test -C _build --print-errorlogs
 If the testsuite passes you can install with
 
 ```
+meson configure _build --prefix=/path/to/install
 meson install -C _build
 ```
 
-This might require administrator access.
-You can alter the install prefix by ``meson configure _build --prefix=/path/to/install``.
+This might require administrator access depending on the chosen install prefix.
+Now you are ready to use ``mctc-gcp``.
+
+
+## Usage
+
+To calculate the geometrical counter poise correction use the [``mctc-gcp(1)``](man/mctc-gcp.1.adoc) program.
+For a Hartree-Fock calculation in split valence basis use
+
+```
+mctc-gcp coord -l hf/def2-svp
+```
+
+Similarly, other methods can be selected.
+Special levels are the “3c” methods ``hf-3c``, ``pbeh-3c``, ``hse-3c``, ``b97-3c`` and ``r2scan-3c``.
+
+Periodic calculations can be performed by providing periodic input, like Vasp's POSCAR, riper coord file or supercell DFTB+ general format.
+
+```
+mctc-gcp POSCAR -l hse-3c
+```
+
+For more details look up [the manual page](man/mctc-gcp.1.adoc).
 
 
 ## Contributors
 
-- J. Gerit Brandenburg ([**@gbrandenburg**](https://github.com/gbrandenburg))
-- Sebastian Ehlert ([**@awvwgk**](https://github.com/awvwgk))
-- Holger Kruse ([**@hokru**](https://github.com/hokru))
+- J. Gerit Brandenburg ([@gbrandenburg](https://github.com/gbrandenburg))
+- Sebastian Ehlert ([@awvwgk](https://github.com/awvwgk))
+- Holger Kruse ([@hokru](https://github.com/hokru))
 
 
 ## References
 
 Please cite the GCP reference publication for work done with this program
 
-1. H. Kruse, S. Grimme *J. Chem. Phys.* 136, 154101 (2012).
+1. H. Kruse, S. Grimme *J. Chem. Phys.* **136**, 154101 (2012).
    DOI: [10.1063/1.3700154](https://doi.org/10.1063/1.3700154)
 2. For periodic GCP also cite:
    J. G. Brandenburg, M. Alessio, B. Civalleri, M. F. Peintinger,
-   T. Bredow, S.Grimme J. Phys. Chem. A 117, 9282-9292 (2013).
+   T. Bredow, S. Grimme *J. Phys. Chem. A* **117**, 9282–9292 (2013).
    DOI: [10.1021/jp406658y](https://doi.org/10.1021/jp406658y)
+
+For the “3c” methods see:
+
+1. R. Sure, S. Grimme *J. Comput. Chem.* **34**, 1672–1685 (2013).
+   DOI: [10.1002/jcc.23317](https://doi.org/10.1002/jcc.23317)
+2. S. Grimme, J. G. Brandenburg, C. Bannwarth, A. Hansen *J. Chem. Phys.* **143**,
+   054107 (2015). DOI: [10.1063/1.4927476](https://doi.org/10.1063/1.4927476)
+3. J. G. Brandenburg, E. Caldeweyher, S. Grimme. *Phys. Chem. Chem. Phys.* **18**,
+   15519–15523 (2016).
+   DOI: [10.1039/C6CP01697A](https://doi.org/10.1039/C6CP01697A)
+4. J. G. Brandenburg, C. Bannwarth, A. Hansen, S. Grimme *J. Chem. Phys.* **148**,
+   064104 (2018). DOI: [10.1063/1.5012601](https://doi.org/10.1063/1.5012601)
 
 
 ## License
