@@ -93,6 +93,8 @@ For the “3c” methods see:
    DOI: [10.1039/C6CP01697A](https://doi.org/10.1039/C6CP01697A)
 4. J. G. Brandenburg, C. Bannwarth, A. Hansen, S. Grimme *J. Chem. Phys.* **148**,
    064104 (2018). DOI: [10.1063/1.5012601](https://doi.org/10.1063/1.5012601)
+5. S. Grimme, A. Hansen, S. Ehlert, J.-M. Mewes, *ChemRxiv*, preprint (2020).
+   DOI: [10.26434/chemrxiv.13333520.v1](https://doi.org/10.26434/chemrxiv.13333520.v1)
 
 
 ## License
