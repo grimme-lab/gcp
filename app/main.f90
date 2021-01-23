@@ -16,8 +16,8 @@
 
 program main
    use, intrinsic :: iso_fortran_env, only : output_unit, error_unit, input_unit
-   use mctc_env
-   use mctc_io
+   use mctc_env, only : error_type, fatal_error, wp
+   use mctc_io, only : structure_type, read_structure, filetype, get_filetype
    use gcp, only : gcp_call, wregrad_tm, get_gcp_version
    use gcp_strings, only : lowercase
    implicit none
