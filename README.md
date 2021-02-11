@@ -1,12 +1,45 @@
 # Geometrical Counter-Poise Correction
 
 [![GPL-3.0-or-later](https://img.shields.io/github/license/grimme-lab/gcp)](LICENSE)
+[![Latest Version](https://img.shields.io/github/v/release/grimme-lab/gcp)](https://github.com/grimme-lab/gcp/releases/latest)
 [![CI](https://github.com/grimme-lab/gcp/workflows/CI/badge.svg)](https://github.com/grimme-lab/gcp/actions)
 [![DOI](https://img.shields.io/badge/DOI-10.1063%2F1.3700154-blue)](https://doi.org/10.1063/1.3700154)
 [![DOI](https://img.shields.io/badge/DOI-10.1021%2Fjp406658y-blue)](https://doi.org/10.1021/jp406658y)
 
 
 ## Installation
+
+A statically linked binary distribution for Linux platforms is available at the [latest release](https://github.com/grimme-lab/gcp/releases/latest) tag.
+
+
+### Conda package
+
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/gcp-correction.svg)](https://anaconda.org/conda-forge/gcp-correction)
+
+This project is packaged for the *conda* package manager and available on the *conda-forge* channel.
+To install the *conda* package manager we recommend the [miniforge](https://github.com/conda-forge/miniforge/releases) installer.
+If the *conda-forge* channel is not yet enabled, add it to your channels with
+
+```
+conda config --add channels conda-forge
+```
+
+Once the *conda-forge* channel has been enabled, this project can be installed with:
+
+```
+conda install gcp-correction
+```
+
+It is possible to list all of the versions available on your platform with:
+
+```
+conda search gcp-correction --channel conda-forge
+```
+
+Now you are ready to use ``mctc-gcp``.
+
+
+### Building from source
 
 To build this project from the source code in this repository you need to have
 - a Fortran compiler supporting Fortran 2008
@@ -93,8 +126,9 @@ For the “3c” methods see:
    DOI: [10.1039/C6CP01697A](https://doi.org/10.1039/C6CP01697A)
 4. J. G. Brandenburg, C. Bannwarth, A. Hansen, S. Grimme *J. Chem. Phys.* **148**,
    064104 (2018). DOI: [10.1063/1.5012601](https://doi.org/10.1063/1.5012601)
-5. S. Grimme, A. Hansen, S. Ehlert, J.-M. Mewes, *ChemRxiv*, preprint (2020).
-   DOI: [10.26434/chemrxiv.13333520.v1](https://doi.org/10.26434/chemrxiv.13333520.v1)
+5. S. Grimme, A. Hansen, S. Ehlert, J.-M. Mewes *J. Chem. Phys.* **154**, 064103 (2021).
+   DOI: [10.1063/5.0040021](https://doi.org/10.1063/5.0040021)
+   ChemRxiv: [10.26434/chemrxiv.13333520.v2](https://doi.org/10.26434/chemrxiv.13333520.v2)
 
 
 ## License
