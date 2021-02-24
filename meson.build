@@ -17,7 +17,7 @@
 project(
   'mctc-gcp',
   'fortran',
-  version: '2.1.2',
+  version: '2.3.0',
   license: 'GPL-3.0-or-later',
   meson_version: '>=0.53',
   default_options: [
@@ -56,6 +56,7 @@ gcp_dep = declare_dependency(
 
 # Add applications
 subdir('app')
+subdir('old')
 
 # Package the license files
 gcp_lic = files(

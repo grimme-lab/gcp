@@ -72,7 +72,7 @@ dmp_scal=4.0d0  ! 4
 dmp_exp=6.0d0   ! 6
 !default
 base=.false.
-damp=.true.
+damp=.false.
 
 !************************
 !* modify input string  *
@@ -109,6 +109,8 @@ if(echo) write(*,*) ' Perform special SRB correction for B97-3c '
 srb=.true.
 rscal=10.00d0
 qscal=0.08d0
+case('r2scan3c','def2mtzvpp','mtzvpp')
+damp=.true.
 case default
 end select
 

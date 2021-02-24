@@ -101,7 +101,7 @@ subroutine test_hf3c(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "01")
-   call test_generic(error, mol, "hf3c", -0.10185940933506053_wp)
+   call test_generic(error, mol, "hf3c", -3.0475695153528881E-2_wp)
 
 end subroutine test_hf3c
 
@@ -166,7 +166,7 @@ subroutine test_hf3c_pbc(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "acetic")
-   call test_generic(error, mol, "hf3c", -0.39914501373759642_wp)
+   call test_generic(error, mol, "hf3c", -0.21073394289693193_wp)
 
 end subroutine test_hf3c_pbc
 

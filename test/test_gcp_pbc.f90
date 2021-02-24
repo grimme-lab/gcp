@@ -98,7 +98,7 @@ subroutine test_anthracene(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "anthracene")
-   call test_generic(error, mol, "hf3c", -0.92569438699860529_wp)
+   call test_generic(error, mol, "hf3c", -0.59161990455181912_wp)
 
 end subroutine test_anthracene
 
@@ -111,7 +111,7 @@ subroutine test_ethcar(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "ethcar")
-   call test_generic(error, mol, "hf3c", -0.26393725722798922_wp)
+   call test_generic(error, mol, "hf3c", -0.11814220512782711_wp)
 
 end subroutine test_ethcar
 
@@ -124,7 +124,7 @@ subroutine test_formamide(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "formamide")
-   call test_generic(error, mol, "hf3c", -0.29006658275561281_wp)
+   call test_generic(error, mol, "hf3c", -0.15500632261441180_wp)
 
 end subroutine test_formamide
 
@@ -137,7 +137,7 @@ subroutine test_hexdio(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "hexdio")
-   call test_generic(error, mol, "hf3c", -0.18028851452622813_wp)
+   call test_generic(error, mol, "hf3c", -4.4642369521389225E-002_wp)
 
 end subroutine test_hexdio
 
@@ -150,7 +150,7 @@ subroutine test_naph(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "naph")
-   call test_generic(error, mol, "hf3c", -1.3397571928969214_wp)
+   call test_generic(error, mol, "hf3c", -1.0399600000679481_wp)
 
 end subroutine test_naph
 
@@ -163,7 +163,7 @@ subroutine test_oxacb(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "X23", "oxacb")
-   call test_generic(error, mol, "hf3c", -0.27269534244235344_wp)
+   call test_generic(error, mol, "hf3c", -0.15716399742412498_wp)
 
 end subroutine test_oxacb
 
