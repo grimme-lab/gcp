@@ -101,7 +101,7 @@ subroutine test_hf_minis(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "04")
-   call test_generic(error, mol, "hf/minis", 1.5336656998809515E-2_wp)
+   call test_generic(error, mol, "hf/minis", 7.6480869740597812E-2_wp)
 
 end subroutine test_hf_minis
 
@@ -114,7 +114,7 @@ subroutine test_hf_minix(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "05")
-   call test_generic(error, mol, "hf/minix", 1.8559832674618637E-2_wp)
+   call test_generic(error, mol, "hf/minix", 1.0104364899718374E-1_wp)
 
 end subroutine test_hf_minix
 
@@ -127,7 +127,7 @@ subroutine test_hf_sv(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "06")
-   call test_generic(error, mol, "hf/sv", 6.4701104644333107E-3_wp)
+   call test_generic(error, mol, "hf/sv", 2.6617114832609839E-2_wp)
 
 end subroutine test_hf_sv
 
@@ -140,7 +140,7 @@ subroutine test_hf_def2sv_p(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "07")
-   call test_generic(error, mol, "hf/def2-sv(p)", 1.5009548340274959E-2_wp)
+   call test_generic(error, mol, "hf/def2-sv(p)", 3.8517711151713638E-2_wp)
 
 end subroutine test_hf_def2sv_p
 
@@ -153,7 +153,7 @@ subroutine test_hf_def2svp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "08")
-   call test_generic(error, mol, "hf/def2-svp", 1.8249078757662872E-2_wp)
+   call test_generic(error, mol, "hf/def2-svp", 3.7848835788317346E-2_wp)
 
 end subroutine test_hf_def2svp
 
@@ -166,7 +166,7 @@ subroutine test_hf_dzp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "08")
-   call test_generic(error, mol, "hf/dzp", 2.4002048454141937E-2_wp)
+   call test_generic(error, mol, "hf/dzp", 4.3822089521084677E-2_wp)
 
 end subroutine test_hf_dzp
 
@@ -179,7 +179,7 @@ subroutine test_hf_deftzvp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "09")
-   call test_generic(error, mol, "hf/def-tzvp", 4.9799363418100567E-3_wp)
+   call test_generic(error, mol, "hf/def-tzvp", 1.4409205281517200E-2_wp)
 
 end subroutine test_hf_deftzvp
 
@@ -192,7 +192,7 @@ subroutine test_hf_def2tzvp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "10")
-   call test_generic(error, mol, "hf/def2-tzvp", 2.1614549442281130E-3_wp)
+   call test_generic(error, mol, "hf/def2-tzvp", 5.7102357181177616E-3_wp)
 
 end subroutine test_hf_def2tzvp
 
@@ -205,7 +205,7 @@ subroutine test_hf_ccpvdz(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "11")
-   call test_generic(error, mol, "hf/cc-pvdz", 9.5654476866715681E-3_wp)
+   call test_generic(error, mol, "hf/cc-pvdz", 2.8850619018747792E-2_wp)
 
 end subroutine test_hf_ccpvdz
 
@@ -218,7 +218,7 @@ subroutine test_hf_augccpvdz(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "12")
-   call test_generic(error, mol, "hf/aug-cc-pvdz", 2.6289439007561133E-3_wp)
+   call test_generic(error, mol, "hf/aug-cc-pvdz", 4.8150616062504351E-3_wp)
 
 end subroutine test_hf_augccpvdz
 

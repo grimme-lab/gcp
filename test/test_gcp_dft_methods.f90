@@ -101,7 +101,7 @@ subroutine test_dft_minis(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "13")
-   call test_generic(error, mol, "dft/minis", 2.8831779044393737E-2_wp)
+   call test_generic(error, mol, "dft/minis", 1.5921613343027519E-1_wp)
 
 end subroutine test_dft_minis
 
@@ -114,7 +114,7 @@ subroutine test_dft_minix(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "14")
-   call test_generic(error, mol, "dft/minix", 1.8191237759356119E-2_wp)
+   call test_generic(error, mol, "dft/minix", 1.0873902337093687E-1_wp)
 
 end subroutine test_dft_minix
 
@@ -127,7 +127,7 @@ subroutine test_dft_sv(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "15")
-   call test_generic(error, mol, "dft/sv", 8.9178105933847233E-3_wp)
+   call test_generic(error, mol, "dft/sv", 4.2061458290263622E-002_wp)
 
 end subroutine test_dft_sv
 
@@ -140,7 +140,7 @@ subroutine test_dft_def2sv_p(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "16")
-   call test_generic(error, mol, "dft/def2-sv(p)", 9.0695660381885229E-3_wp)
+   call test_generic(error, mol, "dft/def2-sv(p)", 3.6732928803962006E-2_wp)
 
 end subroutine test_dft_def2sv_p
 
@@ -153,7 +153,7 @@ subroutine test_dft_def2svp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "17")
-   call test_generic(error, mol, "dft/def2-svp", 2.4834643199826180E-2_wp)
+   call test_generic(error, mol, "dft/def2-svp", 6.8082018400795294E-2_wp)
 
 end subroutine test_dft_def2svp
 
@@ -166,7 +166,7 @@ subroutine test_dft_dzp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "18")
-   call test_generic(error, mol, "dft/dzp", 2.2195075119243783E-2_wp)
+   call test_generic(error, mol, "dft/dzp", 6.0859678618522664E-2_wp)
 
 end subroutine test_dft_dzp
 
@@ -179,7 +179,7 @@ subroutine test_dft_deftzvp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "19")
-   call test_generic(error, mol, "dft/def-tzvp", 3.6258064909241677E-3_wp)
+   call test_generic(error, mol, "dft/def-tzvp", 1.0946847699932089E-2_wp)
 
 end subroutine test_dft_deftzvp
 
@@ -192,7 +192,7 @@ subroutine test_dft_def2tzvp(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "20")
-   call test_generic(error, mol, "dft/def2-tzvp", 3.9044561047188592E-3_wp)
+   call test_generic(error, mol, "dft/def2-tzvp", 9.8496583133859551E-3_wp)
 
 end subroutine test_dft_def2tzvp
 
@@ -205,7 +205,7 @@ subroutine test_dft_ccpvdz(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "21")
-   call test_generic(error, mol, "dft/cc-pvdz", 9.9649294926933245E-3_wp)
+   call test_generic(error, mol, "dft/cc-pvdz", 3.3952526484868496E-2_wp)
 
 end subroutine test_dft_ccpvdz
 
@@ -218,7 +218,7 @@ subroutine test_dft_augccpvdz(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "22")
-   call test_generic(error, mol, "dft/aug-cc-pvdz", 2.9849348931724447E-3_wp)
+   call test_generic(error, mol, "dft/aug-cc-pvdz", 5.9838861620780713E-3_wp)
 
 end subroutine test_dft_augccpvdz
 

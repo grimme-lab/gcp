@@ -37,7 +37,7 @@ jobs:
         --slave /usr/bin/gcov gcov /usr/bin/gcov-${GCC_V}
 
     - name: Install meson
-      run: pip3 install meson ninja
+      run: pip3 install meson==0.56.2 ninja
 
     - name: Configure build
       run: meson setup _build

@@ -99,7 +99,7 @@ write(*,*)'                                             '
 write(*,*)'|              **  g C P  **                |'
 write(*,*)'|  a geometrical counterpoise correction    |'
 write(*,*)'|     H.Kruse J.G.Brandenburg S.Grimme      |'
-write(*,*)'|          Version 2.02 Nov 2016            |'
+write(*,*)'|          Version 2.3.0 Feb 2021           |'
 write(*,*)'|                                           |'
 write(*,*)' ___________________________________________ '
 write(*,*)
