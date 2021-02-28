@@ -5,6 +5,7 @@
 [![CI](https://github.com/grimme-lab/gcp/workflows/CI/badge.svg)](https://github.com/grimme-lab/gcp/actions)
 [![DOI](https://img.shields.io/badge/DOI-10.1063%2F1.3700154-blue)](https://doi.org/10.1063/1.3700154)
 [![DOI](https://img.shields.io/badge/DOI-10.1021%2Fjp406658y-blue)](https://doi.org/10.1021/jp406658y)
+[![codecov](https://codecov.io/gh/grimme-lab/gcp/branch/main/graph/badge.svg)](https://codecov.io/gh/grimme-lab/gcp)
 
 
 ## Installation
