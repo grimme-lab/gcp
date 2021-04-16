@@ -900,11 +900,11 @@ real(8) emiss(mpar),p(*)
 real(8) HFsv(apar),HFminis(apar),HF631gd(apar),HFsvp(apar),HFtz(apar),&
      HFvmb(apar),HFminisd(apar),oldHFsvp(apar),HFpobtz(apar),HFpobdzvp(apar),&
      HF2gcore(apar),HF2g(apar), HFdef1tzvp(apar),HFccdz(apar),HFaccdz(apar),&
-     HFdzp(apar),HFhsv(apar),HFdz(apar),HFmsvp(apar),HFdef2mtzvp(apar),def2mtzvpp(apar) !SG
+     HFdzp(apar),HFhsv(apar),HFdz(apar),HFmsvp(apar),HFdef2mtzvp(apar),HFdef2mtzvpp(apar) !SG
 integer BASsv(apar),BASminis(apar),BAS631gd(apar),BAStz(apar),&
      BASsvp(apar),BASvmb(apar),BASminisd(apar),oldBASsvp(apar),BASpobtz(apar),BASpobdzvp(apar),&
      BAS2gcore(apar),BAS2g(apar),BASdef1tzvp(apar),BASccdz(apar),BASaccdz(apar),&
-     BASdzp(apar),BAShsv(apar),BASdz(apar),BASmsvp(apar),BASdef2mtzvp(apar)
+     BASdzp(apar),BAShsv(apar),BASdz(apar),BASmsvp(apar),BASdef2mtzvp(apar),BASdef2mtzvpp(apar)
 real(8) HFlanl2(10)
 integer BASlanl2(10)
 
@@ -1008,7 +1008,7 @@ data HFdef1tzvp /&  !  org
 0.223252,0.193038,0.167892,0.148726,0.140473,0.130220,0.121166,0.113839,0.121855,0.107138,&
 0.105637,0.086639,0.075084,0.075089,0.070868,0.068706/
 
-data def2mtzvpp /&    !SG
+data HFdef2mtzvpp /&    !SG
 0.027000,0.000000,&
 0.000000,0.000000,0.200000,0.020000,0.180000,0.080000,0.070000,0.065000,&
 0.000000,0.000000,0.000000,0.200000,0.600000,0.600000,0.600000,0.300000,&
@@ -1086,6 +1086,7 @@ data oldBASsvp/2*5,6,9,6*14,2*10,6*18,14,24,10*31,6*32/
 data BAStz/       2*6,14,19,6*31,2*32,6*37,33,36,9*45,48,6*48/
 !data BASdef2mtzvp/2*6,14,19,6*24,2*32,6*37,33,36,9*45,48,6*48/   !def2-TZVP, no f for B-Ne
 data BASdef2mtzvp/2*3,8,11,3*19,24,2*19,2*14,6*22,18,28,10*31,6*36/   !def2-mTZVP
+data BASdef2mtzvpp/2*5,9,11,2*19,4*24,2*14,6*27,18,28,10*31,6*36/  !def2-mTZVPP
 data BASvmb/2*1,2*2,6*4,2*1,6*4,2*0,16*0/ ! minimal basis set with ECPs
 data BASminisd/2*0,2*0,6*0,2*0,6*14,2*0,16*0/
 data BASlanl2/22, 22, 22, 22, 22, 22, 22, 22, 22, 18/ ! Sc-Zn LANL2DZ
@@ -1617,8 +1618,8 @@ case('def2mtzvp')
   emiss(1:apar)=HFdef2mtzvp(1:apar)
   nbas(1:apar)=BASdef2mtzvp(1:apar)
 case('def2mtzvpp','mtzvpp','r2scan3c')  !SG
-  emiss(1:apar)=def2mtzvpp(1:apar)
-  nbas(1:apar)=1
+  emiss(1:apar)=HFdef2mtzvpp(1:apar)
+  nbas(1:apar)=BASdef2mtzvpp(1:apar)
   p(1)=1.0000d0
   p(2)=1.3150d0
   p(3)=0.9410d0
