@@ -1,6 +1,6 @@
 # Geometrical Counter-Poise Correction
 
-[![GPL-3.0-or-later](https://img.shields.io/github/license/grimme-lab/gcp)](LICENSE)
+[![LGPL-3.0-or-later](https://img.shields.io/github/license/grimme-lab/gcp)](LICENSE)
 [![Latest Version](https://img.shields.io/github/v/release/grimme-lab/gcp)](https://github.com/grimme-lab/gcp/releases/latest)
 [![CI](https://github.com/grimme-lab/gcp/workflows/CI/badge.svg)](https://github.com/grimme-lab/gcp/actions)
 [![DOI](https://img.shields.io/badge/DOI-10.1063%2F1.3700154-blue)](https://doi.org/10.1063/1.3700154)
@@ -135,16 +135,16 @@ For the “3c” methods see:
 ## License
 
 This project is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by
+the terms of the Lesser GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 This project is distributed in the hope that it will be useful,
 but without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.  See the
-GNU General Public License for more details.
+Lesser GNU General Public License for more details.
 
 Unless you explicitly state otherwise, any contribution intentionally
 submitted for inclusion in this project by you, as defined in the
-GNU General Public license, shall be licensed as above, without any
+Lesser GNU General Public license, shall be licensed as above, without any
 additional terms or conditions.
