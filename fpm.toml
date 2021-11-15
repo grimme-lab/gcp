@@ -1,6 +1,6 @@
 name = "mctc-gcp"
-version = "2.1.2"
-license = "GPL-3.0-or-later"
+version = "2.3.1"
+license = "LGPL-3.0-or-later"
 maintainer = ["@grimme-lab"]
 author = ["Stefan Grimme", "J. Gerit Brandenburg", "Holger Kruse"]
 copyright = "2012-2021 Grimme group"
