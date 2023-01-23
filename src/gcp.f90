@@ -3932,7 +3932,7 @@ end subroutine set_criteria_gcp
 !C in parts due to INTEL compiler bug
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
-subroutine setr0ab(max_elem,autoang,r)
+subroutine setr0ab(max_elem,autoang,r) bind(c, name='setr0ab')
 implicit none
 integer max_elem,i,j,k
 real*8 r(max_elem,max_elem),autoang

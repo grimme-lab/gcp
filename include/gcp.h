@@ -39,5 +39,10 @@ GCP_API_ENTRY void c_gcp_call(int* n,             // No. of atoms
                               bool* parfile       // flag: print extended parameter file (gcp.param)
                               );
 
+GCP_API_ENTRY void setr0ab(int*    max_elem,      // max element number
+                           double* autoang,       // a.u. to Angstrom (0.52917726)
+                           double* r              // vector of size max_elem x max_elem
+                          );
+
 #endif
 
