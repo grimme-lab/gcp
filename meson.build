@@ -64,11 +64,19 @@ gcp_lic = files(
   'COPYING.LESSER',
 )
 
+gcp_header = files(
+  'include/gcp.h',
+)
+
 if install
   # Distribute the license files in share/licenses/<name>
   install_data(
     gcp_lic,
     install_dir: get_option('datadir')/'licenses'/meson.project_name()
+  )
+
+  install_headers(
+    gcp_header
   )
 
   pkg = import('pkgconfig')
