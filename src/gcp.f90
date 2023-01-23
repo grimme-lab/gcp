@@ -407,6 +407,38 @@ close(1)
 
 end subroutine gcp_call
 
+!***************************************************
+!*                   C/C++-interface               *
+!***************************************************
+subroutine c_gcp_call(n,xyz,lat,iz,gcp_e,gcp_g,gcp_glat,i_dograd,i_dohess,i_pbc,i_method,i_echo,i_parfile) bind(c, name='c_gcp_call')
+!implicit none
+use, intrinsic :: iso_c_binding, only: c_char
+integer n   !number of atoms
+real*8 xyz(3,n) !xyzcoordinates
+real*8 lat(3,3) !lattice matrix
+integer iz(n) !element number
+real*8 gcp_g(3,n) !xyz gradient
+real*8 gcp_glat(3,3)
+real*8  gcp_e
+
+! C-input
+logical*1 i_dograd,i_dohess,i_echo,i_pbc,i_parfile
+character(len=1,kind=c_char), intent(in)    :: i_method(20)
+
+! F-input
+logical dograd,dohess,echo,pbc,parfile
+character*20 method
+
+dograd  = i_dograd
+dohess  = i_dohess
+pbc     = i_pbc
+echo    = i_echo
+parfile = i_parfile
+
+method = transfer(i_method(1:20), method)
+call gcp_call(n,xyz,lat,iz,gcp_e,gcp_g,gcp_glat,dograd,dohess,pbc,method,echo,parfile)
+
+end subroutine c_gcp_call
 
 
 !***************************************************
