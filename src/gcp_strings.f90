@@ -64,6 +64,7 @@ contains
 !**********************************************************************
 
 subroutine parse(str,delims,args,nargs)
+   !DEC$ ATTRIBUTES DLLEXPORT :: parse
 
 ! Parses the string 'str' into arguments args(1), ..., args(nargs) based on
 ! the delimiters contained in the string 'delims'. Preceding a delimiter in
@@ -374,6 +375,7 @@ end function uppercase
 !**********************************************************************
 
 function lowercase(str) result(lcstr)
+   !DEC$ ATTRIBUTES DLLEXPORT :: lowercase
 
 ! convert string to lower case
 

@@ -35,6 +35,7 @@ contains
 
 !> Getter function to retrieve mctc-gcp version
 subroutine get_gcp_version(major, minor, patch, string)
+   !DEC$ ATTRIBUTES DLLEXPORT :: get_gcp_version
 
    !> Major version number of the mctc-gcp version
    integer, intent(out), optional :: major

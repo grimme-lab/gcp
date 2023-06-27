@@ -19,6 +19,7 @@ module gcp
 contains
 !subroutine for interfacing with orca/turbomole/crystal
 subroutine gcp_call(n,xyz,lat,iz,gcp_e,gcp_g,gcp_glat,dograd,dohess,pbc,method,echo,parfile)
+   !DEC$ ATTRIBUTES DLLEXPORT :: gcp_call
 implicit none
 integer n   !number of atoms
 real*8 xyz(3,n) !xyzcoordinates
@@ -839,6 +840,7 @@ end subroutine sgcp
 !* print timings *
 !*****************
 subroutine prtim(io,tt,is,string)
+   !DEC$ ATTRIBUTES DLLEXPORT :: prtim
 integer io
 real*8 tt,t,sec
 integer day,hour,min
@@ -2651,6 +2653,7 @@ endif
 end subroutine g3s3s
 
 subroutine done(aa,io)
+    !DEC$ ATTRIBUTES DLLEXPORT :: done
 ! normal program termination
 implicit none
 integer io
@@ -2667,6 +2670,7 @@ end subroutine done
 !* directly with the coordinates.                           *
 !************************************************************
 subroutine tmolrd(maxat,xyz,iat,ifrez,nat,infile,echo)
+   !DEC$ ATTRIBUTES DLLEXPORT :: tmolrd
 implicit none
 integer maxat
 character*2 cc,ff
@@ -2848,6 +2852,7 @@ end subroutine
 
 
 subroutine help(h)
+   !DEC$ ATTRIBUTES DLLEXPORT :: help
 implicit none
 logical h
 
@@ -3160,6 +3165,7 @@ end
 !* and g to file <gradient>                            *
 !*******************************************************
 subroutine wregrad_tm(maxat,nat,xyz,iat,ifrez,edisp,gin,echo)
+   !DEC$ ATTRIBUTES DLLEXPORT :: wregrad_tm
 implicit none
 integer nat,iat(nat),maxat
 integer ifrez(nat)
@@ -3561,6 +3567,7 @@ end
 !c    rdatomnumbervasp
 !c    reads the number of atoms from vasp file POSCAR
 subroutine rdatomnumbervasp(infile,n,echo)
+   !DEC$ ATTRIBUTES DLLEXPORT :: rdatomnumbervasp
 use gcp_strings
 implicit none
 !c input
@@ -3611,6 +3618,7 @@ end subroutine rdatomnumbervasp
 !c    read geometry from vasp file POSCAR
 !c    reads fixed coordinates (selective dynamics)
 subroutine rdcoordvasp(xyz,lat,iat,nat,infile,echo)
+   !DEC$ ATTRIBUTES DLLEXPORT :: rdcoordvasp
 use gcp_strings
 implicit none
 !input
