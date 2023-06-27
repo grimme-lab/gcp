@@ -64,6 +64,7 @@ contains
 !**********************************************************************
 
 subroutine parse(str,delims,args,nargs)
+   !DEC$ ATTRIBUTES DLLEXPORT :: parse
 
 ! Parses the string 'str' into arguments args(1), ..., args(nargs) based on
 ! the delimiters contained in the string 'delims'. Preceding a delimiter in
