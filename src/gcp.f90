@@ -19,6 +19,7 @@ module gcp
 contains
 !subroutine for interfacing with orca/turbomole/crystal
 subroutine gcp_call(n,xyz,lat,iz,gcp_e,gcp_g,gcp_glat,dograd,dohess,pbc,method,echo,parfile)
+   !DEC$ ATTRIBUTES DLLEXPORT :: gcp_call
 implicit none
 integer n   !number of atoms
 real*8 xyz(3,n) !xyzcoordinates
@@ -3160,6 +3161,7 @@ end
 !* and g to file <gradient>                            *
 !*******************************************************
 subroutine wregrad_tm(maxat,nat,xyz,iat,ifrez,edisp,gin,echo)
+   !DEC$ ATTRIBUTES DLLEXPORT :: wregrad_tm
 implicit none
 integer nat,iat(nat),maxat
 integer ifrez(nat)

@@ -374,6 +374,7 @@ end function uppercase
 !**********************************************************************
 
 function lowercase(str) result(lcstr)
+   !DEC$ ATTRIBUTES DLLEXPORT :: lowercase
 
 ! convert string to lower case
 
