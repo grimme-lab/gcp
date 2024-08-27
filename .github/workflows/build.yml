@@ -1,163 +1,167 @@
 name: CI
-
 on: [push, pull_request]
-
 env:
-  BUILD_DIR: _build_meson
+  BUILD_DIR: _build
   PIP_PACKAGES: >-
-    meson==0.56.2
-    ninja
-    gcovr
-
+    meson ninja gcovr numpy pytest
+  LINUX_INTEL_COMPONENTS: >-
+    intel-oneapi-compiler-fortran-2021.2.0 intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic-2021.2.0 intel-oneapi-mkl-2021.2.0 intel-oneapi-mkl-devel-2021.2.0
 jobs:
-  gcc-build:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-
-    env:
-      FC: gfortran
-      GCC_V: 9
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.x'
-
-    - name: Install GCC (OSX)
-      if: contains(matrix.os, 'macos')
-      run: |
-          ln -s /usr/local/bin/gfortran-${GCC_V} /usr/local/bin/gfortran
-          which gfortran-${GCC_V}
-          which gfortran
-
-    - name: Install GCC (Linux)
-      if: contains(matrix.os, 'ubuntu')
-      run: |
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_V} 100 \
-        --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-${GCC_V} \
-        --slave /usr/bin/gcov gcov /usr/bin/gcov-${GCC_V}
-
-    - name: Install meson/cmake
-      run: pip3 install ${{ env.PIP_PACKAGES }}
-
-    - name: Configure meson build
-      run: >-
-        meson setup ${{ env.BUILD_DIR }}
-        --buildtype=debug
-        --prefix=$PWD/_dist
-        --libdir=lib
-        -Db_coverage=true
-
-    - name: Build project (meson)
-      run: meson compile -C ${{ env.BUILD_DIR }}
-
-    - name: Run unit tests (meson)
-      run: meson test -C ${{ env.BUILD_DIR }} --print-errorlogs --no-rebuild
-
-    - name: Install project (meson)
-      run: meson install -C ${{ env.BUILD_DIR }} --no-rebuild
-
-    - name: Create coverage report (meson)
-      run: ninja -C ${{ env.BUILD_DIR }} coverage
-
-    - name: Upload coverage report
-      uses: codecov/codecov-action@v1
-
-
-  # Test native MinGW Windows build
-  mingw-build:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include: [
-          { msystem: MINGW64, arch: x86_64 },
-        # { msystem: MINGW32, arch: i686   }
-        ]
+        build: [meson]
+        build-type: [debug]
+        compiler: [gnu]
+        version: [12]
+        include:
+          - os: ubuntu-latest
+            build: meson
+            build-type: coverage
+            compiler: gnu
+            version: 11
+          - os: windows-latest
+            build: meson
+            build-type: debug
+            compiler: msys
+            version: 10
+          - os: ubuntu-latest
+            build: meson
+            build-type: debug
+            compiler: intel
+            version: 2021
     defaults:
       run:
-        shell: msys2 {0}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Setup MSYS2 toolchain
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: ${{ matrix.msystem }}
-        update: false
-        install: >-
-          git
-          mingw-w64-${{ matrix.arch }}-gcc-fortran
-          mingw-w64-${{ matrix.arch }}-python
-          mingw-w64-${{ matrix.arch }}-python-pip
-          mingw-w64-${{ matrix.arch }}-ninja
-
-    - name: Install meson/cmake
-      run: pip3 install meson==0.56.2
-
-    - name: Configure meson build
-      run: meson setup ${{ env.BUILD_DIR }}
-      env:
-        FC: gfortran
-        CC: gcc
-
-    - name: Build project (meson)
-      run: meson compile -C ${{ env.BUILD_DIR }}
-
-    - name: Run unit tests (meson)
-      run: meson test -C ${{ env.BUILD_DIR }} --print-errorlogs --no-rebuild
-      env:
-        OMP_NUM_THREADS: 2,1
-
-
-  intel-build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04]
-
+        shell: ${{ matrix.compiler == 'msys' && 'msys2 {0}' || 'bash' }}
     env:
-      FC: ifort
-      OMP_NUM_THREADS: 2,1
-
+      FC: ${{ matrix.compiler == 'intel' && 'ifort' || 'gfortran' }}
+      CC: ${{ matrix.compiler == 'intel' && 'icc' || 'gcc' }}
+      GCC_V: ${{ matrix.version }}
+      PYTHON_V: 3.9
+      OMP_NUM_THREADS: 1,2,1
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.x'
-
-    - name: Add Intel repository
-      run: |
-        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
-        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
-        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
-        echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
-        sudo apt-get update
-
-    - name: Install Intel oneAPI compiler
-      run: |
-        sudo apt-get install intel-oneapi-compiler-fortran
-        source /opt/intel/oneapi/setvars.sh
-        printenv >> $GITHUB_ENV
-
-    - name: Install meson/cmake
-      run: pip3 install ${{ env.PIP_PACKAGES }}
-
-    - name: Configure meson build
-      run: meson setup ${{ env.BUILD_DIR }}
-
-    - name: Build library (meson)
-      run: meson compile -C ${{ env.BUILD_DIR }}
-
-    - name: Run unit tests (meson)
-      run: meson test -C ${{ env.BUILD_DIR }} --print-errorlogs --no-rebuild
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_V }}
+      - name: Link pre-installed GCC and FC (macOS)
+        if: ${{ contains(matrix.os, 'macos') && matrix.compiler == 'gnu' }}
+        run: |
+          brew install openblas
+          gfortran_path=$( which gfortran-${{ env.GCC_V }} )
+          gcc_path=$( which gcc-${{ env.GCC_V }} )
+          gplusplus_path=$( which g++-${{ env.GCC_V }} )
+          export FC=$gfortran_path
+          export CC=$gcc_path
+          export CXX=$gplusplus_path
+          ln -s $gfortran_path /usr/local/bin/gfortran
+          ln -s $gcc_path /usr/local/bin/gcc
+          ln -s $gplusplus_path /usr/local/bin/g++
+          echo "PKG_CONFIG_PATH=/usr/local/opt/openblas/lib/pkgconfig" >> $GITHUB_ENV
+          echo "LDFLAGS=-L/opt/homebrew/opt/openblas/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/opt/openblas/include" >> $GITHUB_ENV
+      - name: Install GCC (Linux)
+        if: ${{ contains(matrix.os, 'ubuntu') && matrix.compiler == 'gnu' }}
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y gcc-${{ env.GCC_V}} gfortran-${{ env.GCC_V }}
+          sudo update-alternatives \
+            --install /usr/bin/gcc gcc /usr/bin/gcc-${{ env.GCC_V }} 100 \
+            --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-${{ env.GCC_V }} \
+            --slave /usr/bin/gcov gcov /usr/bin/gcov-${{ env.GCC_V }}
+      - name: Install GCC (Windows)
+        if: ${{ contains(matrix.os, 'windows') && matrix.compiler == 'msys' }}
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          install: >-
+            git mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-setuptools mingw-w64-x86_64-gcc mingw-w64-x86_64-gcc-fortran mingw-w64-x86_64-openblas mingw-w64-x86_64-lapack mingw-w64-x86_64-cmake mingw-w64-x86_64-meson mingw-w64-x86_64-ninja
+      - name: Prepare for cache restore
+        if: ${{ matrix.compiler == 'intel' }}
+        run: |
+          sudo mkdir -p /opt/intel
+          sudo chown $USER /opt/intel
+      - name: Cache Intel install
+        if: ${{ matrix.compiler == 'intel' }}
+        id: cache-install
+        uses: actions/cache@v2
+        with:
+          path: /opt/intel/oneapi
+          key: install-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}
+      - name: Install Intel (Linux)
+        if: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.compiler, 'intel') && steps.cache-install.outputs.cache-hit != 'true' }}
+        run: |
+          wget https://apt.repos.intel.com/intel-gpg-keys/${{ env.KEY }}
+          sudo apt-key add ${{ env.KEY }}
+          rm ${{ env.KEY }}
+          echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+          sudo apt-get update
+          sudo apt-get install ${{ env.PKG }}
+        env:
+          KEY: GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+          PKG: ${{ env.LINUX_INTEL_COMPONENTS }}
+      - name: Setup Intel oneAPI environment
+        if: ${{ matrix.compiler == 'intel' }}
+        run: |
+          source /opt/intel/oneapi/setvars.sh
+          printenv >> $GITHUB_ENV
+      - name: Install build and test dependencies
+        if: ${{ ! contains(matrix.os, 'windows') }}
+        run: pip3 install ${{ env.PIP_PACKAGES }}
+      - name: Install build and test dependencies
+        if: ${{ contains(matrix.os, 'windows') }}
+        run: pip3 install meson
+      - name: Configure build (meson)
+        if: ${{ matrix.build == 'meson' }}
+        run: >-
+          meson setup ${{ env.BUILD_DIR }} --buildtype=debug --prefix=$PWD/_dist --libdir=lib --warnlevel=0 -Db_coverage=${{ env.COVERAGE }} ${{ env.MESON_ARGS }}
+        env:
+          COVERAGE: ${{ matrix.build-type == 'coverage' }}
+          MESON_ARGS: >-
+            ${{ matrix.compiler == 'intel' && '-Dfortran_link_args=-qopenmp' || '' }} ${{ contains(matrix.os, 'macos') && '-Dlapack=openblas' || '' }}
+      - name: Build library
+        run: ninja -C ${{ env.BUILD_DIR }}
+      - name: Run unit tests
+        if: ${{ matrix.build == 'meson' }}
+        run: |
+          meson test -C ${{ env.BUILD_DIR }} --print-errorlogs --no-rebuild
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+      - name: Run validation tests
+        if: ${{ matrix.build == 'meson' && ! contains(matrix.os, 'windows') }}
+        run: |
+          meson test -C ${{ env.BUILD_DIR }} --print-errorlogs --no-rebuild
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+      - name: Create coverage report
+        if: ${{ matrix.build == 'meson' && matrix.build-type == 'coverage' }}
+        run: ninja -C ${{ env.BUILD_DIR }} coverage
+      - name: Install project
+        run: |
+          ninja -C ${{ env.BUILD_DIR }} install
+          echo "GCP_PREFIX=$PWD/_dist" >> $GITHUB_ENV
+      - name: Create package
+        if: ${{ matrix.build == 'meson' }}
+        run: |
+          tar cvf ${{ env.OUTPUT }} _dist
+          xz -T0 ${{ env.OUTPUT }}
+          echo "GCP_OUTPUT=${{ env.OUTPUT }}.xz" >> $GITHUB_ENV
+        env:
+          OUTPUT: gcp-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}.tar
+      - name: Upload package
+        if: ${{ matrix.build == 'meson' && matrix.build-type != 'coverage' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.GCP_OUTPUT }}
+          path: ${{ env.GCP_OUTPUT }}
+      - name: Upload coverage report
+        if: ${{ matrix.build == 'meson' && matrix.build-type == 'coverage' }}
+        uses: codecov/codecov-action@v1
