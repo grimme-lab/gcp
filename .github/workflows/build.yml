@@ -25,7 +25,7 @@ jobs:
             version: 14
           - os: ubuntu-latest
             build: meson
-            build-type: debug
+            build-type: coverage
             compiler: gnu
             version: 11
           - os: windows-latest
