@@ -16,8 +16,18 @@ jobs:
         build: [meson]
         build-type: [debug]
         compiler: [gnu]
-        version: [12, 13, 14]
+        version: [12, 13]
         include:
+          - os: macos-latest
+            build: meson
+            build-type: debug
+            compiler: gnu
+            version: 14
+          - os: ubuntu-latest
+            build: meson
+            build-type: debug
+            compiler: gnu
+            version: 11
           - os: windows-latest
             build: meson
             build-type: debug
@@ -85,7 +95,7 @@ jobs:
       - name: Cache Intel install
         if: ${{ matrix.compiler == 'intel' }}
         id: cache-install
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /opt/intel/oneapi
           key: install-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}
