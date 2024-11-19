@@ -16,8 +16,13 @@ jobs:
         build: [meson]
         build-type: [debug]
         compiler: [gnu]
-        version: [12]
+        version: [12, 13]
         include:
+          - os: macos-latest
+            build: meson
+            build-type: debug
+            compiler: gnu
+            version: 14
           - os: ubuntu-latest
             build: meson
             build-type: coverage
@@ -90,7 +95,7 @@ jobs:
       - name: Cache Intel install
         if: ${{ matrix.compiler == 'intel' }}
         id: cache-install
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /opt/intel/oneapi
           key: install-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}
@@ -158,10 +163,10 @@ jobs:
           OUTPUT: gcp-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}.tar
       - name: Upload package
         if: ${{ matrix.build == 'meson' && matrix.build-type != 'coverage' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.GCP_OUTPUT }}
           path: ${{ env.GCP_OUTPUT }}
       - name: Upload coverage report
         if: ${{ matrix.build == 'meson' && matrix.build-type == 'coverage' }}
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
