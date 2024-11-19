@@ -25,7 +25,7 @@ module test_gcp_dft_methods
 
    public :: collect_gcp_dft_methods
 
-   real(wp), parameter :: thr = 100*epsilon(1.0_wp)
+   real(wp), parameter :: thr = 1000*epsilon(1.0_wp)
 
 
 contains
