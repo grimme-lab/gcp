@@ -16,13 +16,8 @@ jobs:
         build: [meson]
         build-type: [debug]
         compiler: [gnu]
-        version: [12]
+        version: [12, 13, 14]
         include:
-          - os: ubuntu-latest
-            build: meson
-            build-type: coverage
-            compiler: gnu
-            version: 11
           - os: windows-latest
             build: meson
             build-type: debug
@@ -158,10 +153,10 @@ jobs:
           OUTPUT: gcp-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}.tar
       - name: Upload package
         if: ${{ matrix.build == 'meson' && matrix.build-type != 'coverage' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.GCP_OUTPUT }}
           path: ${{ env.GCP_OUTPUT }}
       - name: Upload coverage report
         if: ${{ matrix.build == 'meson' && matrix.build-type == 'coverage' }}
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
