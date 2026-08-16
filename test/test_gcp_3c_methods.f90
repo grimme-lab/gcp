@@ -116,7 +116,7 @@ subroutine test_pbeh3c(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "02")
-   call test_generic(error, mol, "pbeh3c", 2.0602039298887861E-2_wp)
+   call test_generic(error, mol, "pbeh3c", 2.066306772120080E-2_wp)
 
 end subroutine test_pbeh3c
 
@@ -129,7 +129,7 @@ subroutine test_hse3c(error)
    type(structure_type) :: mol
 
    call get_structure(mol, "MB16-43", "03")
-   call test_generic(error, mol, "hse3c", 1.9885888051458127E-2_wp)
+   call test_generic(error, mol, "hse3c", 1.992146093494964E-2_wp)
 
 end subroutine test_hse3c
 
