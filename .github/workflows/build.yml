@@ -90,7 +90,7 @@ jobs:
       - name: Cache Intel install
         if: ${{ matrix.compiler == 'intel' }}
         id: cache-install
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /opt/intel/oneapi
           key: install-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}
@@ -130,14 +130,7 @@ jobs:
       - name: Run unit tests
         if: ${{ matrix.build == 'meson' }}
         run: |
-          meson test -C ${{ env.BUILD_DIR }} --print-errorlogs --no-rebuild
-        env:
-          OMP_NUM_THREADS: 1
-          MKL_NUM_THREADS: 1
-      - name: Run validation tests
-        if: ${{ matrix.build == 'meson' && ! contains(matrix.os, 'windows') }}
-        run: |
-          meson test -C ${{ env.BUILD_DIR }} --print-errorlogs --no-rebuild
+          meson test -C ${{ env.BUILD_DIR }} --suite mctc-gcp --print-errorlogs --no-rebuild
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -158,10 +151,10 @@ jobs:
           OUTPUT: gcp-${{ matrix.compiler }}-${{ matrix.version }}-${{ matrix.os }}.tar
       - name: Upload package
         if: ${{ matrix.build == 'meson' && matrix.build-type != 'coverage' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.GCP_OUTPUT }}
           path: ${{ env.GCP_OUTPUT }}
       - name: Upload coverage report
         if: ${{ matrix.build == 'meson' && matrix.build-type == 'coverage' }}
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v5

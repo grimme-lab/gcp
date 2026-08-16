@@ -197,12 +197,30 @@ subroutine new_gcp_param(param, mol, input)
    else
       call get_gcp_param(param, mol, method)
    end if
+   call fix_msvp_virtuals(param, method, basis)
 
    if (.not.allocated(param%emiss) .and. .not.param%srb) then
       write(error_unit, '(a)') "[Fatal] No gCP parameters available for '"//trim(input)//"'"
       error stop
    end if
 end subroutine new_gcp_param
+
+
+! s-dftd3 1.5.0 still counts 10 instead of 9 basis functions for Li and
+! Be in def2-mSVP, drop this once the fix is released upstream
+subroutine fix_msvp_virtuals(param, method, basis)
+   type(gcp_param), intent(inout) :: param
+   character(len=*), intent(in) :: method
+   character(len=*), intent(in), optional :: basis
+
+   logical :: msvp
+
+   msvp = method == "pbeh3c" .or. method == "hse3c"
+   if (present(basis)) msvp = msvp .or. basis == "msvp" .or. basis == "def2msvp"
+   if (.not.msvp .or. .not.allocated(param%xv)) return
+
+   where(param%zeff == 3 .or. param%zeff == 4) param%xv = param%xv - 1.0_wp
+end subroutine fix_msvp_virtuals
 
 
 !> Split a level of theory string into method and basis set, normalizing
