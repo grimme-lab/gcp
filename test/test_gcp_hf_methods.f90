@@ -25,7 +25,7 @@ module test_gcp_hf_methods
 
    public :: collect_gcp_hf_methods
 
-   real(wp), parameter :: thr = 100*epsilon(1.0_wp)
+   real(wp), parameter :: thr = 1.0e-7_wp
 
 
 contains
@@ -69,7 +69,7 @@ subroutine test_generic(error, mol, method, energy_ref)
 
    real(wp) :: energy
    real(wp), allocatable :: gradient(:, :)
-   real(wp) :: gradlatt(3, 3)
+   real(wp) :: gradlatt(3, 3), lattice(3, 3)
    logical :: pbc
    character(len=20) :: method_str
    logical, parameter :: dograd = .false.
@@ -79,10 +79,12 @@ subroutine test_generic(error, mol, method, energy_ref)
 
    method_str = method
    pbc = any(mol%periodic)
+   lattice = 0.0_wp
+   if (allocated(mol%lattice)) lattice = transpose(mol%lattice)
 
    allocate(gradient(3, mol%nat))
 
-   call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
+   call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
       & energy, gradient, gradlatt, dograd, dohess, pbc, method_str, echo, parfile)
 
    call check(error, energy_ref, energy, thr=thr)

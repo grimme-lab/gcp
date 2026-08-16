@@ -19,7 +19,6 @@ program main
    use mctc_env, only : error_type, fatal_error, wp
    use mctc_io, only : structure_type, read_structure, filetype, get_filetype
    use gcp, only : gcp_call, wregrad_tm, get_gcp_version
-   use gcp_strings, only : lowercase
    implicit none
    character(len=*), parameter :: prog_name = "mctc-gcp"
 
@@ -30,7 +29,6 @@ program main
    real(wp) :: energy, gradlatt(3, 3), lattice(3, 3)
    real(wp), allocatable :: gradient(:, :)
    character(len=:), allocatable :: method
-   character(len=20) :: lc_method
    logical :: dograd, dohess, echo, parfile
    integer, allocatable :: ifrez(:)
 
@@ -52,7 +50,6 @@ program main
       error stop
    end if
 
-   lc_method = lowercase(method)
    allocate(gradient(3, mol%nat))
    allocate(ifrez(mol%nat), source=0)
 
@@ -68,7 +65,7 @@ program main
 
    call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
       & energy, gradient, gradlatt, dograd, dohess, any(mol%periodic), &
-      & lc_method, echo, parfile)
+      & method, echo, parfile)
 
    if (echo) then
       if (dograd) then
@@ -102,13 +99,13 @@ subroutine help(unit)
 
    write(unit, '(2x, a, t25, a)') &
       "-i, --input <format>", "Hint for the format of the input file", &
-      "-l, --level <method>", "specify method to corrcet for,", &
-      "", "if not present or set to file, local parameters are used,", &
-      "", "local parameters are read from ~/.gcppar.$HOSTNAME", &
+      "-l, --level <method>", "specify method to correct for,", &
+      "", "either as <method>/<basis> or as composite method,", &
+      "", "e.g. hf/def2-svp or hse-3c", &
       "--grad", "request gradient evaluation", &
       "--hess", "request hessian evaluation", &
       "--noprint", "Reduce printout, only print warnings", &
-      "--parfile", "write gcp.param file", &
+      "--parfile", "write gcp.param file (no longer supported)", &
       "--version", "Print program version and exit", &
       "--help", "Show this help message"
 

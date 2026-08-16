@@ -19,7 +19,7 @@ project(
   'fortran',
   version: '2.3.1',
   license: 'LGPL-3.0-or-later',
-  meson_version: '>=0.53',
+  meson_version: '>=0.55',
   default_options: [
     'buildtype=debugoptimized',
     'default_library=both',
@@ -56,7 +56,6 @@ gcp_dep = declare_dependency(
 
 # Add applications
 subdir('app')
-subdir('old')
 
 # Package the license files
 gcp_lic = files(

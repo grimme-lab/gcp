@@ -22,8 +22,8 @@ Hint for the format of the input file
 
 *-l, --level* _method_::
 specify method to correct for,
-if not present or set to _file_, local parameters are used,
-local parameters are read from `~/.gcppar.$HOSTNAME`
+either as _method_/_basis_ or as composite method,
+*e.g.* `hf/def2-svp` or `hse-3c`
 
 *--grad*::
 request gradient evaluation
@@ -35,7 +35,7 @@ request hessian evaluation
 Reduce printout, only print warnings
 
 *--parfile*::
-write `gcp.param` file
+write `gcp.param` file, no longer supported
 
 *--version*::
 Print program version and exit

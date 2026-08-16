@@ -34,3 +34,9 @@
 # Directories
 /build*/
 /_*/
+
+# Program output
+.CP
+.CPC
+gcp_cellgradient
+gcp_hessian

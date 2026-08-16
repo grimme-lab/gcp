@@ -10,14 +10,18 @@ keywords = ["counterpoise", "computational-chemistry"]
 [dependencies]
 [dependencies.mctc-lib]
 git = "https://github.com/grimme-lab/mctc-lib"
-tag = "v0.2.0"
+tag = "v0.5.2"
+[dependencies.s-dftd3]
+git = "https://github.com/dftd3/simple-dftd3"
+tag = "v1.5.0"
 
 [dev-dependencies]
 [dev-dependencies.mstore]
 git = "https://github.com/grimme-lab/mstore"
-tag = "v0.1.1"
+tag = "v0.3.0"
 
 [[executable]]
 name = "mctc-gcp"
 main = "main.f90"
 source-dir = "app"
+
