@@ -153,7 +153,8 @@ subroutine test_hessian(error)
       call test_failed(error, "Generated Hessian file is missing the expected header")
    end if
 
-   call execute_command_line("rm -f gcp_hessian")
+   open(newunit=unit, file="gcp_hessian")
+   close(unit, status="delete")
 
 end subroutine test_hessian
 
