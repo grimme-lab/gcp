@@ -19,6 +19,7 @@ module test_gcp_gradient
    use mctc_env_testing, only : new_unittest, unittest_type, error_type, &
       & test_failed
    use mctc_io_structure, only : structure_type
+   use mctc_io_math, only : matinv_3x3
    use mstore, only : get_structure
    use gcp
    implicit none
@@ -43,7 +44,8 @@ subroutine collect_gcp_gradient(testsuite)
       & new_unittest("DFT/SV", test_dft_sv), &
       & new_unittest("HF-3c", test_hf3c), &
       & new_unittest("B97-3c", test_b973c), &
-      & new_unittest("HSE-3c", test_hse3c) &
+      & new_unittest("HSE-3c", test_hse3c), &
+      & new_unittest("HF-3c (lattice)", test_hf3c_latt) &
       & ]
 
 end subroutine collect_gcp_gradient
@@ -63,7 +65,7 @@ subroutine test_numgrad(error, mol, method)
    integer :: iat, ic, mat
    real(wp) :: energy, er, el
    real(wp), allocatable :: gradient(:, :), numgrad(:, :)
-   real(wp) :: gradlatt(3, 3)
+   real(wp) :: gradlatt(3, 3), lattice(3, 3)
    logical :: pbc
    character(len=20) :: method_str
    logical, parameter :: dohess = .false.
@@ -73,6 +75,8 @@ subroutine test_numgrad(error, mol, method)
 
    method_str = method
    pbc = any(mol%periodic)
+   lattice = 0.0_wp
+   if (allocated(mol%lattice)) lattice = transpose(mol%lattice)
 
    allocate(gradient(3, mol%nat), numgrad(3, mol%nat))
 
@@ -84,11 +88,11 @@ subroutine test_numgrad(error, mol, method)
    do iat = 1, mat
       do ic = 1, 3
          mol%xyz(ic, iat) = mol%xyz(ic, iat) + step
-         call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
+         call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
             & er, gradient, gradlatt, .false., dohess, pbc, method_str, &
             & echo, parfile)
          mol%xyz(ic, iat) = mol%xyz(ic, iat) - 2*step
-         call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
+         call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
             & el, gradient, gradlatt, .false., dohess, pbc, method_str, &
             & echo, parfile)
          mol%xyz(ic, iat) = mol%xyz(ic, iat) + step
@@ -96,7 +100,7 @@ subroutine test_numgrad(error, mol, method)
       end do
    end do
 
-   call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
+   call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
       & energy, gradient, gradlatt, .true., dohess, pbc, method_str, echo, parfile)
 
    if (any(abs(gradient(:, :mat)-numgrad(:, :mat)) > thr)) then
@@ -172,6 +176,75 @@ subroutine test_b973c(error)
    call test_numgrad(error, mol, "b973c")
 
 end subroutine test_b973c
+
+
+!> Compare the lattice gradient against numerical differentiation of the
+!> energy with respect to the cell parameters at fixed fractional coordinates
+subroutine test_numlatt(error, mol, method)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   !> Molecular structure data
+   type(structure_type), intent(in) :: mol
+
+   !> Method name
+   character(len=*), intent(in) :: method
+
+   integer :: ic, jc
+   real(wp) :: energy, er, el
+   real(wp) :: gradlatt(3, 3), numlatt(3, 3), lattice(3, 3), trial(3, 3)
+   real(wp), allocatable :: gradient(:, :), frac(:, :), xyz(:, :)
+   character(len=20) :: method_str
+   logical, parameter :: dohess = .false.
+   logical, parameter :: echo = .false.
+   logical, parameter :: parfile = .false.
+   real(wp), parameter :: step = 1.0e-5_wp, thr2 = 1.0e-6_wp
+
+   method_str = method
+   lattice = transpose(mol%lattice)
+   frac = matmul(matinv_3x3(mol%lattice), mol%xyz)
+   allocate(gradient(3, mol%nat), xyz(3, mol%nat))
+
+   do ic = 1, 3
+      do jc = 1, 3
+         trial(:, :) = lattice
+         trial(ic, jc) = lattice(ic, jc) + step
+         xyz(:, :) = matmul(transpose(trial), frac)
+         call gcp_call(mol%nat, xyz, trial, mol%num(mol%id), &
+            & er, gradient, gradlatt, .false., dohess, .true., method_str, echo, parfile)
+         trial(ic, jc) = lattice(ic, jc) - step
+         xyz(:, :) = matmul(transpose(trial), frac)
+         call gcp_call(mol%nat, xyz, trial, mol%num(mol%id), &
+            & el, gradient, gradlatt, .false., dohess, .true., method_str, echo, parfile)
+         numlatt(ic, jc) = 0.5_wp*(er - el)/step
+      end do
+   end do
+
+   call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
+      & energy, gradient, gradlatt, .true., dohess, .true., method_str, echo, parfile)
+
+   if (any(abs(gradlatt - numlatt) > thr2)) then
+      call test_failed(error, "Numerical and analytical lattice gradient do not match")
+      do ic = 1, 3
+         print'(3es14.5)', gradlatt(ic, :) - numlatt(ic, :)
+      end do
+   end if
+
+end subroutine test_numlatt
+
+
+subroutine test_hf3c_latt(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+
+   call get_structure(mol, "X23", "formamide")
+   call test_numlatt(error, mol, "hf3c")
+
+end subroutine test_hf3c_latt
 
 
 end module test_gcp_gradient

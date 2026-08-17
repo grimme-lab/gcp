@@ -39,7 +39,9 @@ url = https://github.com/grimme-lab/gcp
 revision = head
 ```
 
-The `gcp` library depends on the [MCTC-library](https://github.com/grimme-lab/mctc-lib).
+The `gcp` library depends on the [MCTC-library](https://github.com/grimme-lab/mctc-lib)
+and on [s-dftd3](https://github.com/dftd3/simple-dftd3), which provides the
+implementation of the counterpoise correction.
 You might have to promote those dependencies to your subprojects by copying the wrap files from the `gcp` subprojects.
 
 To load the project the necessary boilerplate code for subprojects is just
