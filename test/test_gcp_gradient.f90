@@ -20,6 +20,7 @@ module test_gcp_gradient
       & test_failed
    use mctc_io_structure, only : structure_type
    use mctc_io_math, only : matinv_3x3
+   use dftd3_gcp, only : gcp_param
    use mstore, only : get_structure
    use gcp
    implicit none
@@ -45,10 +46,45 @@ subroutine collect_gcp_gradient(testsuite)
       & new_unittest("HF-3c", test_hf3c), &
       & new_unittest("B97-3c", test_b973c), &
       & new_unittest("HSE-3c", test_hse3c), &
+      & new_unittest("Custom parameter file", test_paramfile), &
       & new_unittest("HF-3c (lattice)", test_hf3c_latt) &
       & ]
 
 end subroutine collect_gcp_gradient
+
+
+subroutine test_paramfile(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+   type(gcp_param) :: param
+   integer :: unit
+   character(len=256) :: home
+
+   call get_environment_variable('HOME', home)
+   if (len_trim(home) == 0) home = '/tmp'
+   home = trim(home)//'/gcp-paramfile-test'
+   call execute_command_line('rm -rf '//trim(home))
+   call execute_command_line('mkdir -p '//trim(home))
+   open(newunit=unit, file=trim(home)//'/legacy.gcppar', status='replace')
+   write(unit, '(a)') 'sv 0.2 0.4 0.8 0.9'
+   close(unit)
+
+   call get_structure(mol, 'X23', 'CO2')
+   call new_gcp_param(param, mol, trim(home)//'/legacy.gcppar')
+
+   if (abs(param%sigma - 0.2_wp) > 1.0e-12_wp .or. &
+      & abs(param%alpha - 0.8_wp) > 1.0e-12_wp .or. &
+      & abs(param%beta - 0.9_wp) > 1.0e-12_wp) then
+      call test_failed(error, 'Legacy parameter file values were not applied')
+      call execute_command_line('rm -rf '//trim(home))
+      return
+   end if
+
+   call execute_command_line('rm -rf '//trim(home))
+end subroutine test_paramfile
 
 
 subroutine test_numgrad(error, mol, method)
