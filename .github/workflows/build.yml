@@ -35,9 +35,10 @@ jobs:
       run:
         shell: ${{ matrix.compiler == 'msys' && 'msys2 {0}' || 'bash' }}
     env:
-      # the macOS images only ship versioned Homebrew compilers
+      # the macOS images only ship versioned Homebrew compilers, the system
+      # compiler is Apple clang which cannot provide OpenMP
       FC: ${{ contains(matrix.os, 'macos') && format('gfortran-{0}', matrix.version) || 'gfortran' }}
-      CC: gcc
+      CC: ${{ contains(matrix.os, 'macos') && format('gcc-{0}', matrix.version) || 'gcc' }}
       GCC_V: ${{ matrix.version }}
       PYTHON_V: 3.12
       OMP_NUM_THREADS: 1,2,1
