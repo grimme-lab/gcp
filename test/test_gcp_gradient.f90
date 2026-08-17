@@ -47,6 +47,7 @@ subroutine collect_gcp_gradient(testsuite)
       & new_unittest("B97-3c", test_b973c), &
       & new_unittest("HSE-3c", test_hse3c), &
       & new_unittest("Custom parameter file", test_paramfile), &
+      & new_unittest("Hessian", test_hessian), &
       & new_unittest("HF-3c (lattice)", test_hf3c_latt) &
       & ]
 
@@ -151,6 +152,51 @@ subroutine test_numgrad(error, mol, method)
    end if
 
 end subroutine test_numgrad
+
+
+subroutine test_hessian(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+   real(wp) :: energy, gradlatt(3, 3), lattice(3, 3)
+   real(wp), allocatable :: gradient(:, :)
+   logical :: exist
+   integer :: unit, stat
+   character(len=32) :: line
+
+   call get_structure(mol, "MB16-43", "03")
+   lattice = 0.0_wp
+   if (allocated(mol%lattice)) lattice = transpose(mol%lattice)
+   allocate(gradient(3, mol%nat))
+
+   call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
+      & energy, gradient, gradlatt, .false., .true., any(mol%periodic), &
+      & "hf/dz", .false., .false.)
+
+   inquire(file="gcp_hessian", exist=exist)
+   if (.not.exist) then
+      call test_failed(error, "Hessian file was not written")
+      return
+   end if
+
+   open(file="gcp_hessian", newunit=unit, status="old", action="read", iostat=stat)
+   if (stat /= 0) then
+      call test_failed(error, "Failed to open generated Hessian file")
+      return
+   end if
+
+   read(unit, '(a)', iostat=stat) line
+   close(unit)
+   if (stat /= 0 .or. trim(line) /= "$hessian") then
+      call test_failed(error, "Generated Hessian file is missing the expected header")
+   end if
+
+   open(newunit=unit, file="gcp_hessian")
+   close(unit, status="delete")
+
+end subroutine test_hessian
 
 
 subroutine test_hf_dz(error)
