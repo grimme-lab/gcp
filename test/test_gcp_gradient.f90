@@ -20,6 +20,7 @@ module test_gcp_gradient
       & test_failed
    use mctc_io_structure, only : structure_type
    use mctc_io_math, only : matinv_3x3
+   use dftd3_gcp, only : gcp_param
    use mstore, only : get_structure
    use gcp
    implicit none
@@ -45,11 +46,50 @@ subroutine collect_gcp_gradient(testsuite)
       & new_unittest("HF-3c", test_hf3c), &
       & new_unittest("B97-3c", test_b973c), &
       & new_unittest("HSE-3c", test_hse3c), &
+      & new_unittest("Custom parameter file", test_paramfile), &
       & new_unittest("Hessian", test_hessian), &
       & new_unittest("HF-3c (lattice)", test_hf3c_latt) &
       & ]
 
 end subroutine collect_gcp_gradient
+
+
+subroutine test_paramfile(error)
+
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(structure_type) :: mol
+   type(gcp_param) :: param
+   integer :: unit, stat
+   character(len=256) :: tmpdir, file
+
+   tmpdir = ''
+   call get_environment_variable('TMPDIR', tmpdir)
+   if (len_trim(tmpdir) == 0) call get_environment_variable('TEMP', tmpdir)
+   if (len_trim(tmpdir) == 0) call get_environment_variable('TMP', tmpdir)
+   if (len_trim(tmpdir) == 0) tmpdir = '/tmp'
+   file = trim(tmpdir)//'/gcp-paramfile-test.gcppar'
+
+   open(newunit=unit, file=trim(file), status='replace')
+   write(unit, '(a)') 'sv 0.2 0.4 0.8 0.9'
+   close(unit)
+
+   call get_structure(mol, 'X23', 'CO2')
+   call new_gcp_param(param, mol, trim(file))
+
+   if (abs(param%sigma - 0.2_wp) > 1.0e-12_wp .or. &
+      & abs(param%alpha - 0.8_wp) > 1.0e-12_wp .or. &
+      & abs(param%beta - 0.9_wp) > 1.0e-12_wp) then
+      call test_failed(error, 'Legacy parameter file values were not applied')
+      open(newunit=unit, file=trim(file), status='old', action='read', iostat=stat)
+      if (stat == 0) close(unit, status='delete')
+      return
+   end if
+
+   open(newunit=unit, file=trim(file), status='old', action='read', iostat=stat)
+   if (stat == 0) close(unit, status='delete')
+end subroutine test_paramfile
 
 
 subroutine test_numgrad(error, mol, method)
