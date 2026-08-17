@@ -217,7 +217,7 @@ subroutine read_legacy_param(param, mol, input, found)
    logical, intent(out) :: found
 
    character(len=:), allocatable :: file
-   character(len=256) :: home
+   character(len=256) :: home, home2
    logical :: exists
 
    found = .false.
@@ -232,6 +232,19 @@ subroutine read_legacy_param(param, mol, input, found)
 
    home = ''
    call get_environment_variable("HOME", home)
+   if (len_trim(home) == 0) then
+      call get_environment_variable("USERPROFILE", home)
+   end if
+   if (len_trim(home) == 0) then
+      call get_environment_variable("HOMEDRIVE", home)
+      if (len_trim(home) > 0) then
+         home2 = ''
+         call get_environment_variable("HOMEPATH", home2)
+         if (len_trim(home2) > 0) then
+            home = trim(home)//trim(home2)
+         end if
+      end if
+   end if
    if (len_trim(home) > 0) then
       file = trim(home)//"/.gcppar"
       call read_legacy_param_file(param, mol, file, trim(input), found)

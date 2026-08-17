@@ -60,30 +60,34 @@ subroutine test_paramfile(error)
 
    type(structure_type) :: mol
    type(gcp_param) :: param
-   integer :: unit
-   character(len=256) :: home
+   integer :: unit, stat
+   character(len=256) :: tmpdir, file
 
-   call get_environment_variable('HOME', home)
-   if (len_trim(home) == 0) home = '/tmp'
-   home = trim(home)//'/gcp-paramfile-test'
-   call execute_command_line('rm -rf '//trim(home))
-   call execute_command_line('mkdir -p '//trim(home))
-   open(newunit=unit, file=trim(home)//'/legacy.gcppar', status='replace')
+   tmpdir = ''
+   call get_environment_variable('TMPDIR', tmpdir)
+   if (len_trim(tmpdir) == 0) call get_environment_variable('TEMP', tmpdir)
+   if (len_trim(tmpdir) == 0) call get_environment_variable('TMP', tmpdir)
+   if (len_trim(tmpdir) == 0) tmpdir = '/tmp'
+   file = trim(tmpdir)//'/gcp-paramfile-test.gcppar'
+
+   open(newunit=unit, file=trim(file), status='replace')
    write(unit, '(a)') 'sv 0.2 0.4 0.8 0.9'
    close(unit)
 
    call get_structure(mol, 'X23', 'CO2')
-   call new_gcp_param(param, mol, trim(home)//'/legacy.gcppar')
+   call new_gcp_param(param, mol, trim(file))
 
    if (abs(param%sigma - 0.2_wp) > 1.0e-12_wp .or. &
       & abs(param%alpha - 0.8_wp) > 1.0e-12_wp .or. &
       & abs(param%beta - 0.9_wp) > 1.0e-12_wp) then
       call test_failed(error, 'Legacy parameter file values were not applied')
-      call execute_command_line('rm -rf '//trim(home))
+      open(newunit=unit, file=trim(file), status='old', action='read', iostat=stat)
+      if (stat == 0) close(unit, status='delete')
       return
    end if
 
-   call execute_command_line('rm -rf '//trim(home))
+   open(newunit=unit, file=trim(file), status='old', action='read', iostat=stat)
+   if (stat == 0) close(unit, status='delete')
 end subroutine test_paramfile
 
 
